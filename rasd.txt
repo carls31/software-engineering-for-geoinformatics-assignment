@@ -1,0 +1,12 @@
+questions for Prof. Quattrocchi (Giovanni) --> best prof ever
+ - we should provide specific examples of stakeholders (at which level of generalization)
+
+
+stakeholders and actors
+
+Our next 4 meetings:
+-Use cases
+-Use case diagram
+-User stories
+-Domain assumption
+IN ITINERE: Requirements
