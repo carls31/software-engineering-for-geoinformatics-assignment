@@ -1,5 +1,7 @@
-questions for Prof. Quattrocchi (Giovanni) --> best prof ever
- - we should provide specific examples of stakeholders (at which level of generalization)
+questions for Prof. Quattrocchi (Giovanni) 
+--> best prof ever
+ - we should provide specific examples of stakeholders 
+   (at which level of generalization)
 
 
 stakeholders and actors
@@ -9,4 +11,17 @@ Our next 4 meetings:
 -Use case diagram
 -User stories
 -Domain assumption
+
 IN ITINERE: Requirements
+
+TO-DO List (Tomorrow 13/04):
+-Solution Overview
+-Dataset
+-Requirements(fix them)
+-Change the use case diagram
+
+- find/look for a feasible dataset
+
+https://aqicn.org/map/italy/
+
+https://www.youtube.com/watch?v=8Dd7KRpKeaE&t=1s
