@@ -10,3 +10,8 @@ Our next 4 meetings:
 -User stories
 -Domain assumption
 IN ITINERE: Requirements
+Tomorrow:
+-Solution Overview
+-Dataset
+-Requirements(fix them)
+-Change the use case diagram
