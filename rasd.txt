@@ -15,9 +15,20 @@ Our next 4 meetings:
 IN ITINERE: Requirements
 
 TO-DO List (Tomorrow 13/04):
--Solution Overview
+-Solution Overview:
+   -data preprocessing--> select only the data on which you have interest (xarray, pandas,     geopandas) 
+   - data cleaning (outlier detection and removal) 
+   - descriptive statistics (mean, median, mode, range,standard deviation, variance, interquartile range)
+   - some forecast about the air pollution of the next 48h   
 -Dataset
--Requirements(fix them)
+- User Interface Requirements
+   - the interface language will be the English 
+- Functional Requirements 
+   - Visualize data in tables and also on the map 
+   - Data selection 
+   - Outlier removal 
+   - visualize descriptive statistics of data 
+   - visualize the wanted forecast 
 -Change the use case diagram
 
 - find/look for a feasible dataset
