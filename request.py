@@ -10,6 +10,9 @@ print ('-----------------------------------------------------------------------'
 # Set download url
 ServiceUrl = "http://discomap.eea.europa.eu/map/fme/latest"
 
+# country & pollutants list
+'''https://discomap.eea.europa.eu/map/fme/latest/files.txt'''
+
 # Countries to download
 # Note: List is not complete
 countries = ['SE']
