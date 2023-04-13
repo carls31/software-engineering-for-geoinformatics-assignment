@@ -1,3 +1,0 @@
-LATEX
-nella cartella Files ci sono i documenti che potete modificare
-nella cartella Other ci sono file di hypermedia, ignorate 
