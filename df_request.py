@@ -10,9 +10,6 @@ def download_request(countries,pollutants):
 	# Set download url
 	ServiceUrl = "http://discomap.eea.europa.eu/map/fme/latest"
 
-	# country & pollutants list
-	'''https://discomap.eea.europa.eu/map/fme/latest/files.txt'''
-
 	for country in countries:
 		for pollutant in pollutants:
 			fileName = "%s_%s.csv" % (country, pollutant)
