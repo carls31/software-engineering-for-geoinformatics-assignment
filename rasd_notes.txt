@@ -42,6 +42,7 @@ Then in the user stories we summarize what is written in the use cases
 -Dataset loads once into the database , we can think of ways to update the database in automatic or semi-automatic ways 
 -we can use one or more datasets
 
+raise awareness
 
 https://ipccitalia.cmcc.it/cose-lipcc/
 L’IPCC è stato istituito nel 1988 dalla World Meteorological Organization (WMO)e dallo United Nations Environment Programme (UNEP) allo scopo di fornire al mondo una visione chiara e scientificamente fondata dello stato attuale delle conoscenze sui cambiamenti climatici e sui loro potenziali impatti ambientali e socio-economici. Nello stesso anno, l’Assemblea Generale delle Nazioni Unite ha avallato l’azione di WMO e UNEP, istituendo l’IPCC.
