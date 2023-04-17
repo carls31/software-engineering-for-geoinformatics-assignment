@@ -2,9 +2,7 @@ questions
  - we should provide specific examples of stakeholders 
    (at which level of generalization)
 
-TO-DO List 
- - change the use case diagram
- - find/look for a feasible dataset
+
 
 https://aqicn.org/map/italy/
 
@@ -18,3 +16,26 @@ https://www.youtube.com/watch?v=8Dd7KRpKeaE&t=1s
 
 
 different actor if they differs in the functions (app)
+
+TO-DO List 
+ - change the use case diagram
+ - find/look for a feasible dataset
+
+-I due attori accedono alle stesse funzionalità ? Utilizzano l’applicazione in maniera diversa -cioè hanno gli stessi user cases? 
+Attori dovrebbero differire nelle funzionalità che usano , se non lo fanno li collassiamo in uno solo(nell’use case diagram ) . 
+Attori coincidono con gli utenti , attore è tipologia di utente che opera nel sistema in una certa maniera. Se due utenti fanno la stessa cosa sono un solo attore , se fanno due cose diverse sono due attori . Raccontare di più le finalità degli attori.
+-User stories 
+è una sintesi dello use case, una frase come una common citizen possono fare determinate operazioni + la motivazione 
+Usare la struttura scritta sulle slides 
+Per ogni use case serve una use story 
+-Use case :
+(Uso struttura scritta sulle slides ) 
+ci dice la tipologia di attori che possono partecipare , le condizioni per il quale l’operazione può essere fatta (determinate operazione possono essere fatta sempre o in certe situazioni), descrizione di quali sono le azioni coinvolte nella use case , le eccezioni ..
+I nostri sono troppo generici 
+Cosa visualizziamo ? Cosa possiamo vedere (timeline, confronti )?
+Quindi andare più nel dettaglio su use cases 
+
+Poi nella user stories sintetizziamo quello scritto nello use cases 
+-rendere più dettagliati i functional requirementes 
+-Dataset si carica una volta sola nel database , possiamo pensare a modi per aggiornare il database in modi automatici o semi automatici 
+-possiamo usare uno o più dataset
