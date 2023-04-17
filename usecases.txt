@@ -1,10 +1,13 @@
+USER STORIES
 sign in level:
  - common citizen cc [none] --> only visualize descriptive stats (no prediction) and related graphs
  - EMPA [1 psw] --> admin autorization required
  - admin [2 psw] --> different section [back end] [EMPA2.0]
 
-user log in 
+user log in:
+ - EMPA 
 user log out
+- EMPA
 
 space selection:
  - cc
@@ -46,6 +49,86 @@ uncertainty quantification
  - EMPA (for decision making support)
 forecast in the next 6 hours
  - EMPA 
+
+
+USE CASE 
+
+sign-in : 
+ - user:EMPA 
+ - condition: The EMPA user can register, going on the website, clicking on      'sign-in'
+ - flow of the events: 1. A user opens the web-app
+                      2. Clicks on the Log In button
+                      3. Click on “Log in ” button
+                      4. User puts in the name and password
+                      5. After this procedure the user will be registered as a new user in
+                         the system and is redirected to the Log In page.
+- exception: the user's name already exists in the database 
+
+log-in : 
+ - user:EMPA
+ - condition: The EMPA user has already sign-up without errors 
+ - flow of the events: 1. A user opens the application through a browser
+                      2. The user clicks on the "Log In" button.
+                      3. User puts hers/his credentials in the “Name” and “Password”
+                         fields
+                      4. The user clicks on the “Log In” button
+                      5. The user successfully login and the system automatically redirect
+the user to the homepage.
+- exception: the user is not registered yet or has put the wrong name or psw 
+
+log-out :
+ - user: EMPA 
+ - condition: The user has previously succesfully logged in 
+ - flow of Events : 1. The user clicks on the "Log Out" button
+                    2. The user successfully logout and the system redirects the user to      the homepage
+
+space selection: 
+ - user : EMPA/cc 
+ - condition : The user have previously open the homepage 
+ - flow of events :1.The user clicks on the "location" bar
+                   2. The user select one of the pre-defined locations
+   
+
+temporal selection (update dataset):
+- user: EMPA
+- condition : The user should have previuosly logged in and selected a location  
+- flow of events :1. The EMPA user clicks on the "temporal range" bar 
+                  2. The EMPA user can select the amount of time for which he/she wants predictions or descriptive statistics (max next 6 hours)
+-exception: the user has not successfully log-in into the application 
+
+data visualization of tables: 
+- user: EMPA
+- condition : The user should have previously logged in 
+- flow of events :1. The EMPA user clicks on the button "data"       
+                  2. The EMPA user should make query to the database to extract the data of its interest (SQL Language, lo sparo a caso perchè è l'unico che conosco )
+     
+-exception: the user has not successfully log-in into the application, there is some syntax error in the query 
+
+
+
+data visualization of graphs:
+-user : cc/Empa 
+-flow of events:1. The user clicks on the button "data" 
+                2. The user can select the voice "show graphs" that allows the user to see the  ( cosa si intende per graphs?cioè graph di cosa?")
+
+higer resolution map/graph: 
+-user: EMPA
+-condition: The user should have previously logged in
+-flow of events: 1. The EMPA user clicks on the button "resolution"
+                 2. The EMPA user selects on "lower resolution" or "higher resolution" in order to decrement or increment it 
+-exception: the user has not successfully log-in into the application 
+
+show single/multiple pollutant index/indeces: 1. The user clicks  on the button "pollutants indeces" 
+                                              2. The user can select the voice correspondent to the name of the wanted pollutant index/indeces 
+                           
+display computed descriptive stats: 
+
+update dataset: 
+
+advanced stats:
+
+
+
 
 
 
