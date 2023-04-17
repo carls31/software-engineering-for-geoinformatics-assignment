@@ -1,0 +1,51 @@
+sign in level:
+ - common citizen cc [none] --> only visualize descriptive stats (no prediction) and related graphs
+ - EMPA [1 psw] --> admin autorization required
+ - admin [2 psw] --> different section [back end] [EMPA2.0]
+
+user log in 
+user log out
+
+space selection:
+ - cc
+ - EMPA 
+
+temporal selection (update dataset)
+ - EMPA 
+
+ - The user selects the desired location and temporal range for data visualization
+
+data visualization of tables:
+ - EMPA  
+
+data visualization of graphs:
+ - EMPA
+ - cc 
+
+[zoom of graph :]
+ - cc
+ - EMPA
+
+higer resolution map/graph
+ - EMPA
+
+show single/multiple pollutant index/indeces
+ - cc
+ - EMPA
+
+display computed descriptive stats 
+(e.g. min max inter-quantile, mean, mode, median, std deviation, noise)
+ - cc
+ - EMPA
+
+update dataset
+ - EMPA
+
+advanced stats:
+uncertainty quantification 
+ - EMPA (for decision making support)
+forecast in the next 6 hours
+ - EMPA 
+
+
+
