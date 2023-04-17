@@ -21,21 +21,29 @@ TO-DO List
  - change the use case diagram
  - find/look for a feasible dataset
 
--I due attori accedono alle stesse funzionalità ? Utilizzano l’applicazione in maniera diversa -cioè hanno gli stessi user cases? 
-Attori dovrebbero differire nelle funzionalità che usano , se non lo fanno li collassiamo in uno solo(nell’use case diagram ) . 
-Attori coincidono con gli utenti , attore è tipologia di utente che opera nel sistema in una certa maniera. Se due utenti fanno la stessa cosa sono un solo attore , se fanno due cose diverse sono due attori . Raccontare di più le finalità degli attori.
+-Do the two actors access the same functionality ? Do they use the application differently -that is, do they have the same user cases ? 
+Actors should differ in the functionality they use , if they do not we collapse them into one(in the use case diagram ) . 
+Actors coincide with users , actor is type of user who operates in the system in a certain way . If two users do the same thing they are one actor , 
+if they do two different things they are two actors . Tell more about the purposes of actors .
 -User stories 
-è una sintesi dello use case, una frase come una common citizen possono fare determinate operazioni + la motivazione 
-Usare la struttura scritta sulle slides 
-Per ogni use case serve una use story 
+is a summary of the use case, a sentence like a common citizen can do certain operations + the motivation 
+Use the structure written on the slides 
+Each use case needs a use story 
 -Use case :
-(Uso struttura scritta sulle slides ) 
-ci dice la tipologia di attori che possono partecipare , le condizioni per il quale l’operazione può essere fatta (determinate operazione possono essere fatta sempre o in certe situazioni), descrizione di quali sono le azioni coinvolte nella use case , le eccezioni ..
-I nostri sono troppo generici 
-Cosa visualizziamo ? Cosa possiamo vedere (timeline, confronti )?
-Quindi andare più nel dettaglio su use cases 
+(Use structure written on the slides ) 
+tells us the type of actors who can participate , the conditions for which the operation can be done 
+(certain operation can be done always or in certain situations), description of what actions are involved in the use case , exceptions .
+Ours are too general 
+What do we visualize ? What can we see (timeline, comparisons ) ?
+Then go into more detail on use cases 
 
-Poi nella user stories sintetizziamo quello scritto nello use cases 
--rendere più dettagliati i functional requirementes 
--Dataset si carica una volta sola nel database , possiamo pensare a modi per aggiornare il database in modi automatici o semi automatici 
--possiamo usare uno o più dataset
+Then in the user stories we summarize what is written in the use cases 
+-make functional requirementes more detailed. 
+-Dataset loads once into the database , we can think of ways to update the database in automatic or semi-automatic ways 
+-we can use one or more datasets
+
+
+https://ipccitalia.cmcc.it/cose-lipcc/
+L’IPCC è stato istituito nel 1988 dalla World Meteorological Organization (WMO)e dallo United Nations Environment Programme (UNEP) allo scopo di fornire al mondo una visione chiara e scientificamente fondata dello stato attuale delle conoscenze sui cambiamenti climatici e sui loro potenziali impatti ambientali e socio-economici. Nello stesso anno, l’Assemblea Generale delle Nazioni Unite ha avallato l’azione di WMO e UNEP, istituendo l’IPCC.
+L’IPCC esamina e valuta le più recenti informazioni scientifiche, tecniche e socio-economiche prodotte in tutto il mondo, e importanti per la comprensione dei cambiamenti climatici. Non fa ricerca né realizza il monitoraggio di dati e parametri correlati al clima.
+Migliaia di ricercatori provenienti da tutto il mondo contribuiscono al lavoro dell’IPCC su base volontaria. Il processo di revisione è un elemento fondamentale delle procedure IPCC per assicurare una valutazione completa e obiettiva delle informazioni attualmente disponibili. L’IPCC aspira a riflettere una varietà di punti di vista e competenze diverse.
