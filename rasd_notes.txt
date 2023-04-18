@@ -48,3 +48,5 @@ https://ipccitalia.cmcc.it/cose-lipcc/
 L’IPCC è stato istituito nel 1988 dalla World Meteorological Organization (WMO)e dallo United Nations Environment Programme (UNEP) allo scopo di fornire al mondo una visione chiara e scientificamente fondata dello stato attuale delle conoscenze sui cambiamenti climatici e sui loro potenziali impatti ambientali e socio-economici. Nello stesso anno, l’Assemblea Generale delle Nazioni Unite ha avallato l’azione di WMO e UNEP, istituendo l’IPCC.
 L’IPCC esamina e valuta le più recenti informazioni scientifiche, tecniche e socio-economiche prodotte in tutto il mondo, e importanti per la comprensione dei cambiamenti climatici. Non fa ricerca né realizza il monitoraggio di dati e parametri correlati al clima.
 Migliaia di ricercatori provenienti da tutto il mondo contribuiscono al lavoro dell’IPCC su base volontaria. Il processo di revisione è un elemento fondamentale delle procedure IPCC per assicurare una valutazione completa e obiettiva delle informazioni attualmente disponibili. L’IPCC aspira a riflettere una varietà di punti di vista e competenze diverse.
+
+https://discomap.eea.europa.eu/Index/Services.aspx?agsID=59&fID=6678
