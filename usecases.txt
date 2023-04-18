@@ -118,14 +118,17 @@ higer resolution map/graph:
                  2. The EMPA user selects on "lower resolution" or "higher resolution" in order to decrement or increment it 
 -exception: the user has not successfully log-in into the application 
 
-show single/multiple pollutant index/indeces: 1. The user clicks  on the button "pollutants indeces" 
-                                              2. The user can select the voice correspondent to the name of the wanted pollutant index/indeces 
+show single/multiple pollutant index/indeces: 
+- user: EMPA/cc
+-flow of events:1. The user clicks  on the button "pollutants indeces" 
+                2. The user can select the voice correspondent to the name of the wanted pollutant index/indeces 
+-exception : 
                            
 display computed descriptive stats: 
 
-update dataset: 
+update dataset:--> non so bene cosa scrivere  
 
-advanced stats:
+advanced stats:--> non so bene cosa scrivere 
 
 
 
