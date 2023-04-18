@@ -109,7 +109,7 @@ data visualization of tables:
 data visualization of graphs:
 -user : cc/Empa 
 -flow of events:1. The user clicks on the button "data" 
-                2. The user can select the voice "show graphs" that allows the user to see the  ( cosa si intende per graphs?cioè graph di cosa?")
+                2. The user can select the voice "show graphs" that allows the user to see the  ( cosa si intende per graphs?cioè graph di cosa? PLOT of the aoi (selected area or city) showing the content level of one or more pollutant indeces)
 
 higer resolution map/graph: 
 -user: EMPA
@@ -126,9 +126,10 @@ show single/multiple pollutant index/indeces:
                            
 display computed descriptive stats: 
 
-update dataset:--> non so bene cosa scrivere  
+update dataset: non so bene cosa scrivere  -->  e.g. in the interactive dashboard there will be the poossibility to run the function that execute the python script relative to the downloading of new updated data
 
-advanced stats:--> non so bene cosa scrivere 
+advanced stats: non so bene cosa scrivere  -->  e.g. in the interactive dashboard there will be the poossibility to run the function that execute the python script relative to the stochastic model(kernel methods) for prediction/regression/uncerntainty quantification
+
 
 
 
