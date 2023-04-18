@@ -1,4 +1,4 @@
-USER STORIES
+loUSER STORIES
 sign in level:
  - common citizen cc [none] --> only visualize descriptive stats (no prediction) and related graphs
  - EMPA [1 psw] --> admin autorization required
@@ -55,7 +55,7 @@ USE CASE
 
 sign-in : 
  - user:EMPA 
- - condition: The EMPA user can register, going on the website, clicking on      'sign-in'
+ - condition: The EMPA user can register, going on the website, clicking on 'sign-in'
  - flow of the events: 1. A user opens the web-app
                       2. Clicks on the Log In button
                       3. Click on “Log in ” button
@@ -80,7 +80,7 @@ log-out :
  - user: EMPA 
  - condition: The user has previously succesfully logged in 
  - flow of Events : 1. The user clicks on the "Log Out" button
-                    2. The user successfully logout and the system redirects the user to      the homepage
+                    2. The user successfully logout and the system redirects the user to the homepage
 
 space selection: 
  - user : EMPA/cc 
@@ -111,6 +111,9 @@ data visualization of graphs:
 -flow of events:1. The user clicks on the button "data" 
                 2. The user can select the voice "show graphs" that allows the user to see the  ( cosa si intende per graphs?cioè graph di cosa? PLOT of the aoi (selected area or city) showing the content level of one or more pollutant indeces)
 
+
+
+
 higer resolution map/graph: 
 -user: EMPA
 -condition: The user should have previously logged in
@@ -123,7 +126,9 @@ show single/multiple pollutant index/indeces:
 -flow of events:1. The user clicks  on the button "pollutants indeces" 
                 2. The user can select the voice correspondent to the name of the wanted pollutant index/indeces 
 -exception : 
-                           
+            
+
+               
 display computed descriptive stats: 
 
 update dataset: non so bene cosa scrivere  -->  e.g. in the interactive dashboard there will be the poossibility to run the function that execute the python script relative to the downloading of new updated data
