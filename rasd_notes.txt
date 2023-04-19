@@ -50,3 +50,7 @@ L’IPCC esamina e valuta le più recenti informazioni scientifiche, tecniche e 
 Migliaia di ricercatori provenienti da tutto il mondo contribuiscono al lavoro dell’IPCC su base volontaria. Il processo di revisione è un elemento fondamentale delle procedure IPCC per assicurare una valutazione completa e obiettiva delle informazioni attualmente disponibili. L’IPCC aspira a riflettere una varietà di punti di vista e competenze diverse.
 
 https://discomap.eea.europa.eu/Index/Services.aspx?agsID=59&fID=6678
+
+http://blog.soton.ac.uk/skillted/2015/04/15/non-functional-requirements/
+
+https://www.studocu.com/it/document/politecnico-di-milano/software-engineering-2/rasd-progetto-obbligatorio-se2/5962407
