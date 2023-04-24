@@ -1,0 +1,32 @@
+indexes
+
+- intro
+ - purpose
+ - scope
+ - acronims, abbreviations
+  - acronims
+  - abbreviations
+ - document structure
+- architectural design
+ - overview
+ - high level architecture
+ - component view
+ - deployment view
+ - runtime view
+  - **view history
+  - **check real time
+  - **accept request
+  - **search group data
+  - **search followed account
+  - **send request
+  - **ambulance rescue
+  - **view requests
+ - component interfaces
+ - selected architectural styles and patterns
+  - overall architecture
+  - design patterns
+ - other design decisions
+- algorithm design
+ - data validation
+ - data check
+ 
