@@ -4,6 +4,7 @@
 #Peter Kjeld, 15. February 2019
 import os
 import requests
+import pandas as pd
 # Set an output folder
 folder_out = 'data'
 
@@ -27,3 +28,19 @@ def download_request(countries,pollutants):
 			print ('-----')
 		print ('Download finished')
 	return fileName
+
+df = pd.DataFrame()
+df_columns = ['station_code', 'station_name', 'station_altitude', 'network_countrycode', 'pollutant', 'value_datetime_begin','value_datetime_end','value_datetime_updated','value_numeric']
+def build_dataframe(countries, pollutants):	
+	for country in countries:
+		for pollutant in pollutants:
+			fileName = "%s_%s.csv" % (country, pollutant)
+
+			#Download and save to local path
+			df_temp = pd.read_csv("data/"+fileName)
+
+			# Create a DataFrame from a list of list
+			data = [[]]
+			df = pd.DataFrame(data,columns=df_columns)
+
+		print ('Database assembled')
