@@ -1,8 +1,9 @@
+import ipywidgets as widgets
 from sqlalchemy import create_engine, text
 
 
 def login():
-    import ipywidgets as widgets
+
     user = widgets.Text(
         #value='postgres',
         placeholder='Type postgres',
