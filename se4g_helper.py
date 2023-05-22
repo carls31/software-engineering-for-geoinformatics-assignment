@@ -9,22 +9,25 @@ from datetime import datetime
 import ipywidgets as widgets
 from IPython.display import display
 from sqlalchemy import create_engine
-# Set an output folder
 
-def download_request(countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','SE'],
-		     		 pollutants= ['SO2','CO','O3','PM25','PM10'],
+# Download and get the dataframe file name
+def download_request(COUNTRIES= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','SE'],
+		     		 POLLUTANTS= ['SO2','CO','O3','PM10'],
 					 folder_out = 'data'):
 	print ('-----------------------------------------------------------------------')
 	# Set download url
 	ServiceUrl = "http://discomap.eea.europa.eu/map/fme/latest"
 
 	dir = datetime.now().strftime("%d-%m-%Y_%H_%M_%S")
+
 	if not os.path.exists(os.path.join(folder_out, dir)):
+		if not os.path.exists(folder_out):
+			os.mkdir(folder_out)
 		os.mkdir(os.path.join(folder_out, dir))
 		print(dir,'directory created')
 		
-	for country in countries:
-		for pollutant in pollutants:
+	for country in COUNTRIES:
+		for pollutant in POLLUTANTS:
 			fileName = "%s_%s.csv" % (country, pollutant)
 			downloadFile = '%s/%s_%s.csv' % (ServiceUrl, country, pollutant)
 			#Download and save to local path
@@ -41,10 +44,11 @@ def download_request(countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','D
 	print ('Download finished')
 	return dir
 
-
+# Build the dataframe with the required structure
 def build_dataframe(dir,
 					COUNTRIES = ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','SE'], 
-		    		POLLUTANTS = ['SO2','CO','O3','PM25','PM10'], 
+		    		POLLUTANTS = ['SO2','CO','O3','PM10'], 
+				    folder_out = 'data',
 		    		df_columns = ['station_code', 
 							      'station_name', 
 								  'station_altitude', 
@@ -59,32 +63,49 @@ def build_dataframe(dir,
 		for pollutant in POLLUTANTS:
 			
 			fileName = "%s_%s.csv" % (country, pollutant)
-			if fileName != "FI_CO.csv" and fileName != "CY_PM10.csv":
-				df_temp = pd.read_csv("data/"+dir+"/"+fileName)
-
+			with open(os.path.join(folder_out, dir, fileName), 'r') as file:
+				first_line = file.readline().strip()
+			
+			if not first_line.startswith('<!DOCTYPE html'): #first_line.startswith('network_countrycode'):
+				#print(fileName,'exist')
+				df_temp = pd.read_csv(os.path.join(folder_out, dir, fileName))
 				dfs.append(df_temp[df_columns])
 				
 	df_all = pd.concat(dfs, ignore_index=True)
 	print ('Database assembled')
 	return df_all
 
+# Update the final dataset
 def update_dataset(new_df, folder_out = 'data'):
 
 	fileName = "se4g_pollution_dataset.csv"
 	full_path = os.path.join(folder_out, fileName)
 
-	# Open the CSV dataset
-	df = pd.read_csv(full_path)
+	if os.path.isfile(full_path):
+		# Open the CSV dataset
+		df = pd.read_csv(full_path)
+		df['value_datetime_begin'] = pd.to_datetime(df['value_datetime_begin'])
+		new_df['value_datetime_begin'] = pd.to_datetime(new_df['value_datetime_begin'])
 
-	# Update the dataset by adding some data
-	updated_df = pd.concat([df, new_df], ignore_index=True)
+		# Filter rows from new_df based on the datetime
+		filtered_rows = new_df[new_df['value_datetime_begin'] > df['value_datetime_begin'].max()]
+		if not filtered_rows.empty:
+			# Update the dataset by adding the filtered rows
+			updated_df = pd.concat([df, filtered_rows], ignore_index=True)
 
-	# Save the updated dataset
-	updated_df.to_csv(full_path, index=False)
+			# Save the updated dataset
+			updated_df.to_csv(full_path, index=False)
+			print("Dataset updated successfully")
+			
+	else:
+		new_df.to_csv(full_path, index=False)
+		print("Dataset created successfully")
+	return fileName
 
-	print("Dataset updated and saved successfully.")
+	
 
 
+# User login 
 def login_required():
     user = widgets.Text(
         placeholder='Type postgres',
