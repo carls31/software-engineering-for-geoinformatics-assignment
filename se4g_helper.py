@@ -17,20 +17,20 @@ def download_request(countries,pollutants,folder_out = 'data'):
 	ServiceUrl = "http://discomap.eea.europa.eu/map/fme/latest"
 
 	dir = datetime.now().strftime("%d-%m-%Y_%H_%M_%S")
-	if not os.path.exists(dir):
-		os.mkdir(dir)
+	if not os.path.exists(os.path.join(folder_out, dir)):
+		os.mkdir(os.path.join(folder_out, dir))
 		print(dir,'directory created')
-
+		
 	for country in countries:
 		for pollutant in pollutants:
 			fileName = "%s_%s.csv" % (country, pollutant)
 			downloadFile = '%s/%s_%s.csv' % (ServiceUrl, country, pollutant)
 			#Download and save to local path
 			print('Downloading: %s' % downloadFile )
-			file = requests.get(downloadFile).content
 
-			full_file = os.path.join(folder_out,dir, fileName)
-			#full_file = os.path.join(folder_out, fileName)
+			file = requests.get(downloadFile).content
+			full_file = os.path.join(folder_out, dir, fileName)
+
 			output = open(full_file, 'wb')
 			output.write(file)
 			output.close()

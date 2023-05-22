@@ -1,0 +1,10 @@
+from se4g_helper import download_request
+
+# Set countries to be downloaded
+COUNTRIES = ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','SE']
+# Set pollutant to be downloaded
+POLLUTANTS = ['SO2','CO','O3','PM25','PM10']
+
+# Download and get the dataframe file name
+file_name = download_request(COUNTRIES, POLLUTANTS)
+print(file_name)
