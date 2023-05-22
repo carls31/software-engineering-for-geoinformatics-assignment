@@ -34,8 +34,6 @@ def login():
         con = engine.connect()
         print('connected with localhost')
         return con'''
-def prova():
-    print('hello world')
 
 def login_required():
     user = widgets.Text(
@@ -60,7 +58,7 @@ def login_required():
         # Check if username and password are valid
         if username == "postgres" and password == "carIs3198":
             # Connect to the database
-            engine = create_engine('postgresql://'+username.value+':'+password.value+'@localhost:5432/se4g') 
+            engine = create_engine('postgresql://'+username+':'+password+'@localhost:5432/se4g') 
             con = engine.connect()
             # Perform any necessary database operations
             # ...
