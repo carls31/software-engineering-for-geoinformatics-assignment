@@ -65,6 +65,8 @@ def login_required():
             # Return the database connection or perform any other actions
             print('connected with localhost')
             return con
+        else:
+            print('it does not work')
 
     login_button.on_click(handle_login_button_click)
 
