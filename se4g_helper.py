@@ -11,7 +11,9 @@ from IPython.display import display
 from sqlalchemy import create_engine
 # Set an output folder
 
-def download_request(countries,pollutants,folder_out = 'data'):
+def download_request(countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','SE'],
+		     		 pollutants= ['SO2','CO','O3','PM25','PM10'],
+					 folder_out = 'data'):
 	print ('-----------------------------------------------------------------------')
 	# Set download url
 	ServiceUrl = "http://discomap.eea.europa.eu/map/fme/latest"
@@ -36,12 +38,13 @@ def download_request(countries,pollutants,folder_out = 'data'):
 			output.close()
 			print ('Saved locally as: %s ' % fileName)
 			print ('-----')
-		print ('Download finished')
-	return fileName
+	print ('Download finished')
+	return dir
 
 
-def build_dataframe(COUNTRIES, 
-		    		POLLUTANTS, 
+def build_dataframe(dir,
+					COUNTRIES = ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','SE'], 
+		    		POLLUTANTS = ['SO2','CO','O3','PM25','PM10'], 
 		    		df_columns = ['station_code', 
 							      'station_name', 
 								  'station_altitude', 
@@ -57,13 +60,30 @@ def build_dataframe(COUNTRIES,
 			
 			fileName = "%s_%s.csv" % (country, pollutant)
 			if fileName != "FI_CO.csv" and fileName != "CY_PM10.csv":
-				df_temp = pd.read_csv("data/"+fileName)
-				#data = df_temp[df_columns]
+				df_temp = pd.read_csv("data/"+dir+"/"+fileName)
+
 				dfs.append(df_temp[df_columns])
-				#df_all = pd.DataFrame(data)
+				
 	df_all = pd.concat(dfs, ignore_index=True)
 	print ('Database assembled')
 	return df_all
+
+def update_dataset(new_df, folder_out = 'data'):
+
+	fileName = "se4g_pollution_dataset.csv"
+	full_path = os.path.join(folder_out, fileName)
+
+	# Open the CSV dataset
+	df = pd.read_csv(full_path)
+
+	# Update the dataset by adding some data
+	updated_df = pd.concat([df, new_df], ignore_index=True)
+
+	# Save the updated dataset
+	updated_df.to_csv(full_path, index=False)
+
+	print("Dataset updated and saved successfully.")
+
 
 def login_required():
     user = widgets.Text(
