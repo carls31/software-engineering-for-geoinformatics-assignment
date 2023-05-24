@@ -8,5 +8,3 @@ df = build_dataframe(dir, folder_out = 'data_prova')
 
 # Update the final dataset
 update_dataset(df, folder_out = 'data_prova')
-
-print('se4g_pollution_dataset updated successfully')

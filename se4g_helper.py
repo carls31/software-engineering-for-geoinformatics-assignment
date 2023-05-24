@@ -100,7 +100,11 @@ def update_dataset(new_df, folder_out = 'data'):
 
 			# Save the updated dataset
 			updated_df.to_csv(full_path, index=False)
-			print("Dataset updated successfully")
+			print("Dataset ",fileName," updated successfully")
+
+			# Save locally for backup
+			backup_dir = "C:\Users\Utente\OneDrive - Politecnico di Milano\[2022-23] - Software Engineering for GEO\dataset_backup"
+			updated_df.to_csv(backup_dir, index=False)
 			
 	else:
 		new_df.to_csv(full_path, index=False)
