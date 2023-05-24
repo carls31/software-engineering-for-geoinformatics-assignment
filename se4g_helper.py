@@ -10,6 +10,9 @@ import ipywidgets as widgets
 from IPython.display import display
 from sqlalchemy import create_engine
 
+countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','SE']
+pollutants= ['SO2','NO','NO2','CO','PM10']
+
 # Download and get the dataframe file name
 def download_request(COUNTRIES= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','SE'],
 		     		 POLLUTANTS= ['SO2','NO','NO2','CO','PM10'],
@@ -47,7 +50,7 @@ def download_request(COUNTRIES= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','D
 # Build the dataframe with the required structure
 def build_dataframe(dir,
 					COUNTRIES = ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','SE'], 
-		    		POLLUTANTS = ['SO2','CO','O3','PM10'], 
+		    		POLLUTANTS = ['SO2','NO','NO2','CO','PM10'], 
 				    folder_out = 'data',
 		    		df_columns = ['station_code', 
 							      'station_name', 
