@@ -9,8 +9,8 @@ from datetime import datetime
 import ipywidgets as widgets
 from IPython.display import display
 from sqlalchemy import create_engine
-
-countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','SE']
+# ,'ES'
+countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','FI','SE']
 pollutants= ['SO2','NO','NO2','CO','PM10']
 
 # Download and get the dataframe file name
@@ -44,7 +44,7 @@ def download_request(COUNTRIES= countries,
 			output = open(full_file, 'wb')
 			output.write(file)
 			output.close()
-			print ('Saved locally as: %s ' % fileName)
+			print ('Saved locally as: %s ' % full_file)
 			print ('-----')
 	print ('Download finished')
 	return dir
@@ -66,14 +66,22 @@ def build_dataframe(dir,
 	dfs = []
 	for country in COUNTRIES:
 		for pollutant in POLLUTANTS:
-			
+
 			fileName = "%s_%s.csv" % (country, pollutant)
-			with open(os.path.join(folder_out, dir, fileName), 'r') as file:
+			print(fileName)
+			file_path = os.path.join(folder_out, dir, fileName)
+			'''
+			_, file_extension = os.path.splitext(file_path)
+			if file_extension == ".csv" and os.path.isfile(file_path):
+			'''
+			with open(file_path, 'r') as file:
+				print(file)
 				first_line = file.readline().strip()
 			
 			if not first_line.startswith('<!DOCTYPE html'): #first_line.startswith('network_countrycode'):
 				#print(fileName,'exist')
-				df_temp = pd.read_csv(os.path.join(folder_out, dir, fileName))
+
+				df_temp = pd.read_csv(file_path)
 				dfs.append(df_temp[df_columns])
 				
 	df_all = pd.concat(dfs, ignore_index=True)
@@ -94,7 +102,9 @@ def update_dataset(new_df, folder_out = 'data'):
 
 		# Filter rows from new_df based on the datetime
 		filtered_rows = new_df[new_df['value_datetime_begin'] > df['value_datetime_begin'].max()]
-		if not filtered_rows.empty:
+		if filtered_rows.empty:
+			print("Nothing to update inside dataset ",fileName)
+		elif not filtered_rows.empty:
 			# Update the dataset by adding the filtered rows
 			updated_df = pd.concat([df, filtered_rows], ignore_index=True)
 
@@ -103,9 +113,9 @@ def update_dataset(new_df, folder_out = 'data'):
 			print("Dataset ",fileName," updated successfully")
 
 			# Save locally for backup
-			backup_dir = "C:\Users\Utente\OneDrive - Politecnico di Milano\[2022-23] - Software Engineering for GEO\dataset_backup"
-			updated_df.to_csv(backup_dir, index=False)
-			
+			'''backup_dir = "C:/Users/Utente/Documents/GitHub/SE4GEO-backup"
+			updated_df.to_csv(backup_dir, index=False)'''
+
 	else:
 		new_df.to_csv(full_path, index=False)
 		print("Dataset ",fileName," created successfully")
