@@ -14,13 +14,14 @@ countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','SE
 pollutants= ['SO2','NO','NO2','CO','PM10']
 
 # Download and get the dataframe file name
-def download_request(COUNTRIES= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','SE'],
-		     		 POLLUTANTS= ['SO2','NO','NO2','CO','PM10'],
+def download_request(COUNTRIES= countries,
+		     		 POLLUTANTS= pollutants,
 					 folder_out = 'data'):
 	print ('-----------------------------------------------------------------------')
 	# Set download url
+	# https://discomap.eea.europa.eu/map/fme/AirQualityUTDExport.htm
 	ServiceUrl = "http://discomap.eea.europa.eu/map/fme/latest"
-	#   https://discomap.eea.europa.eu/map/fme/AirQualityUTDExport.htm
+	
 
 	dir = datetime.now().strftime("%d-%m-%Y_%H_%M_%S")
 
@@ -50,8 +51,8 @@ def download_request(COUNTRIES= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','D
 
 # Build the dataframe with the required structure
 def build_dataframe(dir,
-					COUNTRIES = ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','SE'], 
-		    		POLLUTANTS = ['SO2','NO','NO2','CO','PM10'], 
+					COUNTRIES = countries, 
+		    		POLLUTANTS = pollutants, 
 				    folder_out = 'data',
 		    		df_columns = ['station_code', 
 							      'station_name', 
