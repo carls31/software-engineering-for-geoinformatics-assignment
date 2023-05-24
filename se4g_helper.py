@@ -20,6 +20,7 @@ def download_request(COUNTRIES= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','D
 	print ('-----------------------------------------------------------------------')
 	# Set download url
 	ServiceUrl = "http://discomap.eea.europa.eu/map/fme/latest"
+	#   https://discomap.eea.europa.eu/map/fme/AirQualityUTDExport.htm
 
 	dir = datetime.now().strftime("%d-%m-%Y_%H_%M_%S")
 
