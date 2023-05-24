@@ -103,8 +103,7 @@ def update_dataset(new_df, folder_out = 'data'):
 			
 	else:
 		new_df.to_csv(full_path, index=False)
-		print("Dataset created successfully")
-	return fileName
+		print("Dataset ",fileName," created successfully")
 
 	
 
