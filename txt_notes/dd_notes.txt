@@ -32,3 +32,10 @@ indexes
  
  - add db connenction
  
+1) Architectural Design (diagram) [Frontend is only the dashboard
+2) Database description
+3) REST API(Web server with Flask):
+ -API of the website we use for download the data
+ -Python function used to link user request <--< database (Query construction)
+
+ add JupyterDash_demo update
