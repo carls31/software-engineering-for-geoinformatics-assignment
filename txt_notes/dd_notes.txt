@@ -30,3 +30,5 @@ indexes
  - data validation
  - data check
  
+ - add db connenction
+ 
