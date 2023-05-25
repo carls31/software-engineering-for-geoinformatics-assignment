@@ -9,8 +9,8 @@ from datetime import datetime
 import ipywidgets as widgets
 from IPython.display import display
 from sqlalchemy import create_engine
-# ,'ES'
-countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','DK','EE','FI','SE']
+# 
+countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','ES','DK','EE','FI','SE']
 pollutants= ['SO2','NO','NO2','CO','PM10']
 
 # Download and get the dataframe file name
