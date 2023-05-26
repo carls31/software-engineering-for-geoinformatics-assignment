@@ -122,12 +122,19 @@ def update_dataset(new_df, folder_out = 'data'):
 
 	
 
-
-# User login 
+# --------------------------------------------------------------------------------------------------------------------
+# User login & registration
+# --------------------------------------------------------------------------------------------------------------------
 
 class Login:
     def __init__(self):
-        self.user_list = {'admin': 'admin', 'lorenzo': 'lore', 'angelica': 'ange', 'emma': 'em', 'virginia': 'virgi'}
+
+        folder = 'data'
+        filename = 'admins.csv'
+        self.path_file = os.path.join(folder,filename)
+        if os.path.isfile(self.path_file):
+            df = pd.read_csv(self.path_file)
+            self.user_list = dict(zip(df['Username'], df['Password']))
     
     def check_credentials(self, username, password):
         if username in self.user_list:
@@ -138,8 +145,16 @@ class Login:
     def register_user(self, username, password):
         if username not in self.user_list:
             self.user_list[username] = password
+            self.save_users_to_csv()
             return True
         return False
+    
+    def save_users_to_csv(self):
+        data = {'Username': list(self.user_list.keys()), 'Password': list(self.user_list.values())}
+        df = pd.DataFrame(data)
+        df.to_csv(self.filename, index=False)
+        print(f"User data saved to {self.filename} successfully.")
+        
     
 def DB_login():
     user = widgets.Text(
@@ -174,16 +189,67 @@ def DB_login():
             with open('code/'+file, 'r') as f:
                 engine = create_engine('postgresql://'+db_username+':'+f.read()+'@'+ip+':'+port+'/'+db) 
             con = engine.connect()
-            # Return the database connection or perform any other actions
-            print("Login successful! Connected with",ip)
             # Perform any necessary database operations
             # ...
+            # Return the database connection or perform any other actions
+            print("Login successful! Connected with",ip)
             return con
         else:
             print("Invalid username or password.")
 
     login_button.on_click(handle_login_button_click)
     
+
+class Register:
+    def __init__(self):
+        folder = 'data'
+        filename = 'registrations.csv'
+        self.path_file = os.path.join(folder, filename)
+        if os.path.isfile(self.path_file):
+            df = pd.read_csv(self.path_file)
+            self.register_list = dict(zip(df['Username'], df['Password']))
+        else:
+            self.register_list = {}
+
+        self.login = Login()
+    
+    def add_registration(self, username, password):
+        self.register_list[username] = password
+        self.save_registrations_to_csv()
+    
+    def remove_registration(self, username, password):
+        #self.register_list = [(u, p) for u, p in self.register_list if (u, p) != (username, password)]
+        if username in self.register_list and self.register_list[username] == password:
+            del self.register_list[username]
+            self.save_registrations_to_csv()
+    
+    def review_registrations(self):
+        def approve_user(username, password):
+            self.login.register_user(username, password)
+            self.remove_registration(username, password)
+            print(f"{username} admitted!")
+
+        def reject_user(username, password):
+            self.remove_registration(username, password)
+            print(f"{username} rejected!")
+
+        for username, password in self.register_list.items():
+            approve_button = widgets.Button(description='Admit')
+            reject_button = widgets.Button(description='Reject')
+
+            approve_button.on_click(lambda _, u=username, p=password: approve_user(u, p))
+            reject_button.on_click(lambda _, u=username, p=password: reject_user(u, p))
+
+            display(widgets.HBox([widgets.Label(username), approve_button, reject_button]))
+    
+    def save_registrations_to_csv(self):
+        data = {'Username': list(self.register_list.keys()), 'Password': list(self.register_list.values())}
+        df = pd.DataFrame(data)
+        df.to_csv(self.path_file, index=False)
+        print(f"Registration request saved successfully.")
+
+
+
 
 def login_required():
     user = widgets.Text(
@@ -201,21 +267,18 @@ def login_required():
     login_button = widgets.Button(description="Login")
     display(user, psw, login_button)
 
+    login = Login()
+
     def handle_login_button_click(button):
         username = user.value
         password = psw.value
 
-        # Check if username and password are valid
-        if username == "postgres" and password == "carIs3198":
-            # Connect to the database
-            engine = create_engine('postgresql://'+username+':'+password+'@localhost:5432/se4g') 
-            con = engine.connect()
-            # Perform any necessary database operations
-            # ...
-            # Return the database connection or perform any other actions
-            print('connected with localhost')
-            return con
+        if login.check_credentials(username, password):
+            
+
+            print("Login successful!")
+            
         else:
-            print('it does not work')
+            print("Invalid username or password.")
 
     login_button.on_click(handle_login_button_click)
