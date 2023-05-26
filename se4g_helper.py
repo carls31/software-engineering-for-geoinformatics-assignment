@@ -124,6 +124,67 @@ def update_dataset(new_df, folder_out = 'data'):
 
 
 # User login 
+
+class Login:
+    def __init__(self):
+        self.user_list = {'admin': 'admin', 'lorenzo': 'lore', 'angelica': 'ange', 'emma': 'em', 'virginia': 'virgi'}
+    
+    def check_credentials(self, username, password):
+        if username in self.user_list:
+            if self.user_list[username] == password:
+                return True
+        return False
+    
+    def register_user(self, username, password):
+        if username not in self.user_list:
+            self.user_list[username] = password
+            return True
+        return False
+    
+def DB_login():
+    user = widgets.Text(
+        placeholder='Type postgres',
+        description='Username:',
+        disabled=False   
+    )
+
+    psw = widgets.Password(
+        placeholder='Enter password',
+        description='Password:',
+        disabled=False
+    )
+    
+    login_button = widgets.Button(description="Login")
+    display(user, psw, login_button)
+
+    login = Login()
+
+    def handle_login_button_click(button):
+        username = user.value
+        password = psw.value
+
+        if login.check_credentials(username, password):
+            
+            ip = 'localhost'
+            db = 'se4g'
+            db_username = 'postgres'
+            port = '5432'
+            # Connect to the database
+            file = 'bin.txt'
+            with open('code/'+file, 'r') as f:
+                engine = create_engine('postgresql://'+db_username+':'+f.read()+'@'+ip+':'+port+'/'+db) 
+            con = engine.connect()
+            # Return the database connection or perform any other actions
+            print("Login successful! Connected with",ip)
+            # Perform any necessary database operations
+            # ...
+            return con
+        else:
+            print("Invalid username or password.")
+
+    login_button.on_click(handle_login_button_click)
+    
+
 def login_required():
     user = widgets.Text(
         placeholder='Type postgres',
