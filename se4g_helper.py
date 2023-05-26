@@ -120,6 +120,63 @@ def update_dataset(new_df, folder_out = 'data'):
 		new_df.to_csv(full_path, index=False)
 		print("Dataset ",fileName," created successfully")
 
+def update_dashboard_dataset(df,folder_out = 'data'):
+    
+    fileName = "se4g_dashboard_dataset.csv"
+    full_path = os.path.join(folder_out, fileName)
+    
+    country = {'AD': 'Andorra', 
+           'SE':'Sweden', 
+           'DE':'Germany', 
+           'CY':'Undefined', 
+           'BE':'Belgium', 
+           'FI':'Finland', 
+           'ES':'Spain', 
+           'CZ':'Czech Republic', 
+           'BG':'Bulgaria', 
+           'BA':'Bosnia and Herzegovina', 
+           'EE':'Estonia', 
+           'CH':'Switzerland',
+           'AT':'Austria', 
+           'DK':'Denmark'}
+
+    if os.path.isfile(full_path):
+        old_df = pd.read_csv(full_path)
+        # Convert 'value_datetime_end' to datetime objects and extract the day
+        datetime_objects = df['value_datetime_end'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S%z'))
+        df['day'] = datetime_objects.dt.day
+        
+		# Compute daily mean of 'value_numeric' for each 'pollutant' and 'network_countrycode'
+        daily_mean = df.groupby(['pollutant', 'network_countrycode', 'day'])['value_numeric'].mean().reset_index()
+        
+		# Merge the daily mean back to the original dataframe
+        df = df.merge(daily_mean, on=['pollutant', 'network_countrycode', 'day'], suffixes=('', '_mean'))
+        
+        # Convert 'value_datetime_end' to int64 type
+        #df['value_datetime_end'] = datetime_objects.apply(lambda x: x.strftime('%m%d%H')).astype('int64')
+
+        df['country'] = df['network_countrycode'].map(country)
+        df = df[['pollutant', 'country', 'day', 'value_numeric_mean']].copy()
+        
+
+        df = df.drop_duplicates().reset_index(drop=True)
+        df = df.sort_values('day')
+        
+        filtered_rows = df[df['value_datetime_begin'] > old_df['value_datetime_begin'].max()]
+        if filtered_rows.empty:
+            print("Nothing to update inside dataset ",fileName)
+        elif not filtered_rows.empty:
+            updated_df = pd.concat([old_df, filtered_rows], ignore_index=True)
+            updated_df.to_csv(full_path, index=False)
+            print("Dataset ",fileName," updated successfully")
+    else: 
+         df.to_csv(full_path, index=False)
+         print("Dataset ",fileName," created successfully")
+        
+
+     
+     
+
 	
 
 # --------------------------------------------------------------------------------------------------------------------
