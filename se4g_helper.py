@@ -237,7 +237,7 @@ def DB_login():
 
         if login.check_credentials(username, password):
             
-            ip = 'localhost'
+            ip = '192.168.30.19'
             db = 'se4g'
             db_username = 'postgres'
             port = '5432'
