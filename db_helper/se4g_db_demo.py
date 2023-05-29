@@ -42,9 +42,10 @@ def login_required():
         password = psw.value
 
         # Check if username and password are valid
+        ip = '192.168.30.19'
         if username == "postgres" and password == "carIs3198":
             # Connect to the database
-            engine = create_engine('postgresql://'+username+':'+password+'@localhost:5432/se4g') 
+            engine = create_engine('postgresql://'+username+':'+password+'@'+ip+':5432/se4g') 
             con = engine.connect()
             # Perform any necessary database operations
             # ...
