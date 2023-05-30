@@ -103,34 +103,34 @@ def build_dataframe(dir,
 # Update the final dataset
 def update_dataset(new_df, folder_out = 'data'):
 
-	fileName = "se4g_pollution_dataset.csv"
-	full_path = os.path.join(folder_out, fileName)
+    fileName = "se4g_pollution_dataset.csv"
+    full_path = os.path.join(folder_out, fileName)
 
-	if os.path.isfile(full_path):
-		# Open the CSV dataset
-		df = pd.read_csv(full_path)
-		df['value_datetime_begin'] = pd.to_datetime(df['value_datetime_begin'])
-		new_df['value_datetime_begin'] = pd.to_datetime(new_df['value_datetime_begin'])
+    if os.path.isfile(full_path):
+        # Open the CSV dataset
+        df = pd.read_csv(full_path)
+        df['value_datetime_begin'] = pd.to_datetime(df['value_datetime_begin'])
+        new_df['value_datetime_begin'] = pd.to_datetime(new_df['value_datetime_begin'])
 
-		# Filter rows from new_df based on the datetime
-		filtered_rows = new_df[new_df['value_datetime_begin'] > df['value_datetime_begin'].max()]
-		if filtered_rows.empty:
-			print("Nothing to update inside dataset ",fileName)
-		elif not filtered_rows.empty:
-			# Update the dataset by adding the filtered rows
-			updated_df = pd.concat([df, filtered_rows], ignore_index=True)
+        # Filter rows from new_df based on the datetime
+        filtered_rows = new_df[new_df['value_datetime_begin'] > df['value_datetime_begin'].max()]
+        if filtered_rows.empty:
+            print("Nothing to update inside dataset ",fileName)
+        elif not filtered_rows.empty:
+            # Update the dataset by adding the filtered rows
+            updated_df = pd.concat([df, filtered_rows], ignore_index=True)
 
-			# Save the updated dataset
-			updated_df.to_csv(full_path, index=False)
-			print("Dataset ",fileName," updated successfully")
+            # Save the updated dataset
+            updated_df.to_csv(full_path, index=False)
+            print("Dataset ",fileName," updated successfully")
 
-			# Save locally for backup
-			'''backup_dir = "C:/Users/Utente/Documents/GitHub/SE4GEO-backup"
-			updated_df.to_csv(backup_dir, index=False)'''
-
-	else:
-		new_df.to_csv(full_path, index=False)
-		print("Dataset ",fileName," created successfully")
+            # Save locally for backup
+            '''backup_dir = "C:/Users/Utente/Documents/GitHub/SE4GEO-backup"
+            updated_df.to_csv(backup_dir, index=False)'''
+            return filtered_rows
+    else:
+        new_df.to_csv(full_path, index=False)
+        print("Dataset ",fileName," created successfully")
 
 def update_dashboard_dataset(df,folder_out = 'data'):
     
