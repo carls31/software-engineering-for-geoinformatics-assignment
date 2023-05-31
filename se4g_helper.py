@@ -63,6 +63,7 @@ def download_request(COUNTRIES= countries,
     print('Download finished')
     return dir
 
+
 # Build the dataframe with the required structure
 def build_dataframe(dir,
 					COUNTRIES = countries, 
