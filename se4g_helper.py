@@ -30,37 +30,38 @@ pollutants= ['SO2','NO','NO2','CO','PM10']
 def download_request(COUNTRIES= countries,
 		     		 POLLUTANTS= pollutants,
 					 folder_out = 'data'):
-	print ('-----------------------------------------------------------------------')
-	# Set download url
-	# https://discomap.eea.europa.eu/map/fme/AirQualityUTDExport.htm
-	ServiceUrl = "http://discomap.eea.europa.eu/map/fme/latest"
-	
+    print('-----------------------------------------------------------------------')
+    # Set download url
+    # https://discomap.eea.europa.eu/map/fme/AirQualityUTDExport.htm
+    ServiceUrl = "http://discomap.eea.europa.eu/map/fme/latest"
 
-	dir = datetime.now().strftime("%d-%m-%Y_%H_%M_%S")
+    dir = datetime.now().strftime("%d-%m-%Y_%H_%M_%S")
 
-	if not os.path.exists(os.path.join(folder_out, dir)):
-		if not os.path.exists(folder_out):
-			os.mkdir(folder_out)
-		os.mkdir(os.path.join(folder_out, dir))
-		print(dir,'directory created')
-		
-	for country in COUNTRIES:
-		for pollutant in POLLUTANTS:
-			fileName = "%s_%s.csv" % (country, pollutant)
-			downloadFile = '%s/%s_%s.csv' % (ServiceUrl, country, pollutant)
-			#Download and save to local path
-			print('Downloading: %s' % downloadFile )
+    if not os.path.exists(os.path.join(folder_out, dir)):
+        if not os.path.exists(folder_out):
+            os.mkdir(folder_out)
+        os.mkdir(os.path.join(folder_out, dir))
+        print(dir, 'directory created')
 
-			file = requests.get(downloadFile).content
-			full_file = os.path.join(folder_out, dir, fileName)
+    for country in COUNTRIES:
+        for pollutant in POLLUTANTS:
+            fileName = "%s_%s.csv" % (country, pollutant)
+            downloadFile = '%s/%s_%s.csv' % (ServiceUrl, country, pollutant)
+            # Download and save to local path
+            print('Downloading: %s' % downloadFile)
 
-			output = open(full_file, 'wb')
-			output.write(file)
-			output.close()
-			print ('Saved locally as: %s ' % full_file)
-			print ('-----')
-	print ('Download finished')
-	return dir
+            file_content = requests.get(downloadFile).content
+            file_content_str = file_content.decode('utf-8-sig')
+
+            full_file = os.path.join(folder_out, dir, fileName)
+
+            with open(full_file, 'w', encoding='utf-8') as output:
+                output.write(file_content_str)
+
+            print('Saved locally as: %s ' % full_file)
+            print('-----')
+    print('Download finished')
+    return dir
 
 # Build the dataframe with the required structure
 def build_dataframe(dir,
