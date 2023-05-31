@@ -5,6 +5,7 @@ from datetime import datetime
 import ipywidgets as widgets
 from IPython.display import display
 from sqlalchemy import create_engine
+import codecs
 
 
 
