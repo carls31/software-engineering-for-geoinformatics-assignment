@@ -88,7 +88,8 @@ def build_dataframe(dir,
 			'''
 			with open(file_path, 'r') as file:
 				print(file)
-				first_line = file.readline().strip()
+				first_line = file.readline().strip()#.decode('utf-8-sig')
+                
 			
 			if not first_line.startswith('<!DOCTYPE html'): #first_line.startswith('network_countrycode'):
 				#print(fileName,'exist')
@@ -152,31 +153,33 @@ def update_dashboard_dataset(df,folder_out = 'data'):
            'AT':'Austria', 
            'DK':'Denmark'}
 
+
+    # Convert 'value_datetime_end' to datetime objects and extract the day
+    datetime_objects = df['value_datetime_end'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S%z'))
+    df['day'] = datetime_objects.dt.day
+    
+    # Compute daily mean of 'value_numeric' for each 'pollutant' and 'network_countrycode'
+    daily_mean = df.groupby(['pollutant', 'network_countrycode', 'day'])['value_numeric'].mean().reset_index()
+    
+    # Merge the daily mean back to the original dataframe
+    df = df.merge(daily_mean, on=['pollutant', 'network_countrycode', 'day'], suffixes=('', '_mean'))
+    
+    # Convert 'value_datetime_end' to int64 type
+    #df['value_datetime_end'] = datetime_objects.apply(lambda x: x.strftime('%m%d%H')).astype('int64')
+
+    df['country'] = df['network_countrycode'].map(country)
+    #df = df[['pollutant', 'country', 'day', 'value_numeric_mean']].copy()
+    df = df[['pollutant', 'country', 'day', 'value_numeric_mean','value_datetime_begin']].copy()
+
+    df = df.drop_duplicates().reset_index(drop=True)
+    df = df.sort_values('day')
+    
     if os.path.isfile(full_path):
         old_df = pd.read_csv(full_path)
-        # Convert 'value_datetime_end' to datetime objects and extract the day
-        datetime_objects = df['value_datetime_end'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S%z'))
-        df['day'] = datetime_objects.dt.day
-        
-		# Compute daily mean of 'value_numeric' for each 'pollutant' and 'network_countrycode'
-        daily_mean = df.groupby(['pollutant', 'network_countrycode', 'day'])['value_numeric'].mean().reset_index()
-        
-		# Merge the daily mean back to the original dataframe
-        df = df.merge(daily_mean, on=['pollutant', 'network_countrycode', 'day'], suffixes=('', '_mean'))
-        
-        # Convert 'value_datetime_end' to int64 type
-        #df['value_datetime_end'] = datetime_objects.apply(lambda x: x.strftime('%m%d%H')).astype('int64')
-
-        df['country'] = df['network_countrycode'].map(country)
-        df = df[['pollutant', 'country', 'day', 'value_numeric_mean']].copy()
-        
-
-        df = df.drop_duplicates().reset_index(drop=True)
-        df = df.sort_values('day')
         
         filtered_rows = df[df['value_datetime_begin'] > old_df['value_datetime_begin'].max()]
         if filtered_rows.empty:
-            print("Nothing to update inside dataset ",fileName)
+            print("Nothing to update inside ",fileName)
         elif not filtered_rows.empty:
             updated_df = pd.concat([old_df, filtered_rows], ignore_index=True)
             updated_df.to_csv(full_path, index=False)
