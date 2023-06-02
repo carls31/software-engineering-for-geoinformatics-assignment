@@ -8,9 +8,6 @@ from sqlalchemy import create_engine
 import codecs
 
 
-
-
-
 #---------------------------------------------------------------------------------------------------------------------#
 #---------------------------------------------------------------------------------------------------------------------#
 #--                                                                                                                 --#
@@ -22,9 +19,204 @@ import codecs
 
 
 
-# 
+#
 countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','ES','DK','EE','FI','SE']
 pollutants= ['SO2','NO','NO2','CO','PM10']
+
+########################## DB transition ##########################
+import psycopg2
+ip = '192.168.30.19'
+ip = 'localhost'
+conn = psycopg2.connect(
+    host = ip,
+    database = "se4g",
+    user = "postgres",
+    password = "carIs3198"
+)
+print('connected with ',ip)
+
+
+def insert_data(table_name, rows, conn, columns):
+    cur = conn.cursor()
+
+    # Generate the SQL INSERT statement with specified columns
+    insert_statement = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({', '.join(['%s'] * len(columns))})"
+
+    
+    rows = [
+        tuple(
+            val.strftime('%Y-%m-%d %H:%M:%S%z') if isinstance(val, datetime) else val
+            if val != '' else None  # Replace empty string with None for double precision columns
+            for val in row
+        )
+        for row in rows
+    ]
+
+
+    # Execute the INSERT statement for each row
+    cur.executemany(insert_statement, rows)
+
+    # Commit the changes and close the cursor
+    conn.commit()
+    cur.close()
+
+
+def table_exists(table_name, conn):
+    cur = conn.cursor()
+    cur.execute(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}')")
+    exists = cur.fetchone()[0]
+    cur.close()
+    return exists
+
+
+# Update the final dataset
+def update_DB(new_rows, connection, table_name='se4g_prova', columns=None):
+    cur = connection.cursor()
+
+    # Generate the SQL SELECT statement
+    select_statement = f"SELECT * FROM {table_name}"
+
+    # Execute the SELECT statement
+    cur.execute(select_statement)
+
+    # Fetch all the results
+    results = cur.fetchall()
+
+    # Get the column names from the cursor description
+    all_columns = [desc[0] for desc in cur.description]
+
+    # Use all columns if specific columns are not provided
+    if not columns:
+        columns = all_columns
+
+    # Convert the results to a set of tuples for efficient comparison
+    existing_data = {tuple(row) for row in results}
+
+    # Filter new_rows to only include rows not already present in the table
+    filtered_rows = [row for row in new_rows if tuple(row) not in existing_data]
+
+    if len(filtered_rows) == 0:
+        print("Nothing to update inside database", table_name)
+    else:
+
+        # Execute the INSERT statement to add the filtered rows
+        insert_data(table_name, filtered_rows, connection, columns)
+        print("Database", table_name, "updated successfully")
+
+    # Close the cursor
+    cur.close()
+
+    return filtered_rows
+
+
+
+
+# Download and get the dataframe file name
+def download_DB(
+    COUNTRIES=countries,
+    POLLUTANTS=pollutants,
+    folder_out='data',
+    df_columns=[
+        'station_code',
+        'station_name',
+        'station_altitude',
+        'network_countrycode',
+        'pollutant',
+        'value_datetime_begin',
+        'value_datetime_end',
+        'value_datetime_updated',
+        'value_numeric',
+    ],
+    table_name='se4g_prova',
+    connection=conn,
+):
+    print('-----------------------------------------------------------------------')
+    # Set download url
+    # https://discomap.eea.europa.eu/map/fme/AirQualityUTDExport.htm
+    ServiceUrl = "http://discomap.eea.europa.eu/map/fme/latest"
+
+    dir = datetime.now().strftime("%d-%m-%Y_%H_%M_%S")
+
+    if not os.path.exists(os.path.join(folder_out, dir)):
+        if not os.path.exists(folder_out):
+            os.mkdir(folder_out)
+        os.mkdir(os.path.join(folder_out, dir))
+        print(dir, 'directory created')
+
+    # Create a cursor
+    cur = connection.cursor()
+
+    # Check if the table exists, create it if it doesn't
+    if not table_exists(table_name, connection):
+
+        data_type = ['VARCHAR',
+            'VARCHAR',
+            'FLOAT',
+            'CHAR(2)',
+            'VARCHAR',
+            'VARCHAR',
+            'VARCHAR',
+            'VARCHAR',
+            'FLOAT']
+        
+        column_definitions = [f"{column} {data_type[i]}" for i, column in enumerate(df_columns)]
+        create_table_statement = f"CREATE TABLE {table_name} ({', '.join(column_definitions)})"
+        cur.execute(create_table_statement)
+        conn.commit()
+
+    for country in COUNTRIES:
+        for pollutant in POLLUTANTS:
+            downloadFile = f"{ServiceUrl}/{country}_{pollutant}.csv"
+            # Download and save to local path
+            print('Downloading:', downloadFile)
+
+            file_content = requests.get(downloadFile).content
+            file_content_str = file_content.decode('utf-8-sig')
+
+            # Split the string into lines and split each line by comma (change delimiter as per your CSV format)
+            lines = file_content_str.splitlines()
+            lines = file_content_str.strip().split('\n')
+
+            print(lines[0])
+
+            if not lines[0].startswith('<!DOCTYPE html'):
+
+                # Create a list of values to be inserted
+                data = [line.split(',') for line in lines]
+
+                # Get the column names from the CSV file
+                csv_columns = data[0]
+
+                # Create a dictionary to map CSV columns to indices
+                csv_column_dict = {col: index for index, col in enumerate(csv_columns)}
+                '''column_dict = {col: index for index, col in enumerate(df_columns)}'''
+
+
+                # Filter the data to include only the desired columns
+                '''filtered_data = [[row[column_dict[col]] for col in df_columns] for row in data[1:]]'''
+                filtered_data = [[row[csv_column_dict[col]] for col in df_columns] for row in data[1:]]
+                
+                new_rows = [tuple(row) for row in filtered_data]
+
+                print('Download finished and new_rows assembled')
+
+                print('Download finished and new_rows assembled')
+                print(new_rows[:5])
+
+                # Update the database table with new rows if not already present
+                updated_rows = update_DB(new_rows, connection, table_name, df_columns)
+
+                return updated_rows
+
+    # Close the cursor and connection
+    cur.close()
+
+
+
+
+
+
+########################## CSV ##########################
 
 # Download and get the dataframe file name
 def download_request(COUNTRIES= countries,
