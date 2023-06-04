@@ -5,7 +5,7 @@ from datetime import datetime
 import ipywidgets as widgets
 from IPython.display import display
 from sqlalchemy import create_engine
-import codecs
+#import codecs
 
 
 #---------------------------------------------------------------------------------------------------------------------#
@@ -23,7 +23,7 @@ import codecs
 countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','ES','DK','EE','FI','SE']
 pollutants= ['SO2','NO','NO2','CO','PM10']
 
-########################## DB transition ##########################
+############################################ DB transition ############################################
 '''import psycopg2
 ip = '192.168.30.19'
 ip = 'localhost'
@@ -150,7 +150,7 @@ def download_DB(
         create_table_statement = f"CREATE TABLE {table_name} ({', '.join(column_definitions)})"
         cur.execute(create_table_statement)
         connection.commit()
-
+    print('countries', COUNTRIES)
     for country in COUNTRIES:
         for pollutant in POLLUTANTS:
             downloadFile = f"{ServiceUrl}/{country}_{pollutant}.csv"
@@ -188,17 +188,108 @@ def download_DB(
                 # Update the database table with new rows if not already present
                 updated_rows = update_DB(new_rows, connection, table_name, df_columns)
 
-                return updated_rows
+                #return updated_rows
 
-    # Close the cursor and connection
+    # Close the cursor 
     cur.close()
 #conn.close()
 
+############################################## DB from CSV ##############################################
+
+def insert_data_from_CSV(table_name, df, conn, df_columns = ['station_code', 
+                                                    'station_name', 
+                                                    'station_altitude', 
+                                                    'network_countrycode', 
+                                                    'pollutant', 
+                                                    'value_datetime_begin',
+                                                    'value_datetime_end',
+                                                    'value_datetime_updated',
+                                                    'value_numeric']):
+    cur = conn.cursor()
+
+    # Iterate over the DataFrame rows and insert data row by row
+    for _, row in df.iterrows():
+        # Generate the SQL INSERT statement
+        insert_statement = f"INSERT INTO {table_name} ({', '.join(df_columns)}) VALUES ({', '.join(['%s'] * len(df_columns))})"
+        values = tuple(row[col] for col in df_columns)
+
+        # Execute the INSERT statement
+        cur.execute(insert_statement, values)
+
+    
+    # Commit the changes and close the cursor 
+    conn.commit()
+    cur.close()
 
 
+def update_DB_from_CSV(new_df, connection, engine, table_name='se4g_pollution'):
+
+    query = f"SELECT * FROM {table_name}"
+    df = pd.read_sql_query(query, engine)
+
+    df['value_datetime_begin'] = pd.to_datetime(df['value_datetime_begin'])
+    new_df['value_datetime_begin'] = pd.to_datetime(new_df['value_datetime_begin'])
+    #new_df.loc[:, 'value_datetime_begin'] = pd.to_datetime(new_df['value_datetime_begin'])
+
+    # Filter rows from new_df based on the datetime
+    filtered_rows = new_df[new_df['value_datetime_begin'] > df['value_datetime_begin'].max()]
+
+    if filtered_rows.empty:
+        print("Nothing to update inside database ",table_name)
+
+    elif not filtered_rows.empty:
+
+        # Update the dataset by adding the filtered rows
+        #filtered_rows.to_sql(table_name, engine, if_exists='append', index=False)
+
+        # Update the dataset by adding the filtered rows
+        insert_data_from_CSV(table_name, filtered_rows, connection)
+        print("Database ",table_name," updated successfully")
+
+        return filtered_rows
 
 
-########################## CSV ##########################
+def update_dashboard_DB_from_CSV(new_rows, connection, table_name='se4g_dashboard',
+    columns = ['pollutant', 'country', 'month_day', 'value_numeric_mean', 'value_datetime_begin']):
+    country = {'AD': 'Andorra', 'SE': 'Sweden', 'DE': 'Germany', 'CY': 'Undefined', 'BE': 'Belgium',
+               'FI': 'Finland', 'ES': 'Spain', 'CZ': 'Czech Republic', 'BG': 'Bulgaria', 'BA': 'Bosnia and Herzegovina',
+               'EE': 'Estonia', 'CH': 'Switzerland', 'AT': 'Austria', 'DK': 'Denmark'}
+
+    # Convert 'value_datetime_end' to datetime objects
+    datetime_objects = new_rows['value_datetime_end'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S%z'))
+    new_rows['month_day'] = datetime_objects.dt.strftime('%m%d')
+    new_rows['value_datetime_begin'] = pd.to_datetime(new_rows['value_datetime_begin']).dt.strftime('%Y-%m-%d %H:%M:%S')
+
+    # Compute daily mean of 'value_numeric' for each 'pollutant' and 'network_countrycode'
+    daily_mean = new_rows.groupby(['pollutant', 'network_countrycode', 'month_day'])['value_numeric'].mean().reset_index()
+
+    # Merge the daily mean back to the original dataframe
+    new_rows = new_rows.merge(daily_mean, on=['pollutant', 'network_countrycode', 'month_day'], suffixes=('', '_mean'))
+
+    new_rows['country'] = new_rows['network_countrycode'].map(country)
+    new_rows = new_rows[columns].copy()
+    new_rows = new_rows.drop_duplicates().reset_index(drop=True)
+    new_rows = new_rows.sort_values('month_day')
+
+    query = f"SELECT * FROM {table_name}"
+    df = pd.read_sql_query(query, connection)
+
+    df_value_datetime_begin = pd.to_datetime(df['value_datetime_begin']).dt.strftime('%Y-%m-%d %H:%M:%S')
+
+    print("New rows: \n",new_rows)
+    print("Max value_datetime_begin in new_rows: \n",new_rows['value_datetime_begin'].max())
+    print("Max value_datetime_begin in df: \n",df['value_datetime_begin'].max())
+    
+    filtered_rows = new_rows[new_rows['value_datetime_begin'] > df_value_datetime_begin.max()]
+
+    if filtered_rows.empty:
+        print("Nothing to update inside database", table_name)
+    else:
+        insert_data_from_CSV(table_name, filtered_rows, connection, df_columns=columns)
+        print("Database", table_name, "updated successfully")
+
+
+############################################## CSV ##############################################
 
 # Download and get the dataframe file name
 def download_request(COUNTRIES= countries,
@@ -259,13 +350,10 @@ def build_dataframe(dir,
 			fileName = "%s_%s.csv" % (country, pollutant)
 			print(fileName)
 			file_path = os.path.join(folder_out, dir, fileName)
-			'''
-			_, file_extension = os.path.splitext(file_path)
-			if file_extension == ".csv" and os.path.isfile(file_path):
-			'''
-			with open(file_path, 'r') as file:
+
+			with open(file_path, 'r', encoding='utf-8-sig') as file:
 				print(file)
-				first_line = file.readline().strip()#.decode('utf-8-sig')
+				first_line = file.readline().strip()#.decode('utf-8')
                 
 			
 			if not first_line.startswith('<!DOCTYPE html'): #first_line.startswith('network_countrycode'):
