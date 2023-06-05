@@ -222,10 +222,10 @@ def insert_data_from_CSV(table_name, df, conn, df_columns = ['station_code',
     cur.close()
 
 
-def update_DB_from_CSV(new_df, connection, engine, table_name='se4g_pollution'):
+def update_DB_from_CSV(new_df, connection, table_name='se4g_pollution'):
 
     query = f"SELECT * FROM {table_name}"
-    df = pd.read_sql_query(query, engine)
+    df = pd.read_sql_query(query, connection)
 
     df['value_datetime_begin'] = pd.to_datetime(df['value_datetime_begin'])
     new_df['value_datetime_begin'] = pd.to_datetime(new_df['value_datetime_begin'])
@@ -363,7 +363,7 @@ def build_dataframe(dir,
 				dfs.append(df_temp[df_columns])
 				
 	df_all = pd.concat(dfs, ignore_index=True)
-	print ('Database assembled')
+	print ('Dataframe assembled')
 	return df_all
 
 # Update the final dataset
@@ -444,7 +444,7 @@ def update_dashboard_dataset(df,folder_out = 'data'):
         
         filtered_rows = df[df['value_datetime_begin'] > old_df['value_datetime_begin'].max()]
         if filtered_rows.empty:
-            print("Nothing to update inside ",fileName)
+            print("Nothing to update inside dataset",fileName)
         elif not filtered_rows.empty:
             updated_df = pd.concat([old_df, filtered_rows], ignore_index=True)
             updated_df.to_csv(full_path, index=False)
