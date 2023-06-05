@@ -24,16 +24,6 @@ countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','ES','DK','EE','FI','SE
 pollutants= ['SO2','NO','NO2','CO','PM10']
 
 ############################################ DB transition ############################################
-'''import psycopg2
-ip = '192.168.30.19'
-ip = 'localhost'
-conn = psycopg2.connect(
-    host = ip,
-    database = "se4g",
-    user = "postgres",
-    password = "carIs3198"
-)
-print('connected with ',ip)'''
 
 
 def insert_data(table_name, rows, conn, columns):
@@ -222,10 +212,10 @@ def insert_data_from_CSV(table_name, df, conn, df_columns = ['station_code',
     cur.close()
 
 
-def update_DB_from_CSV(new_df, connection, table_name='se4g_pollution'):
+def update_DB_from_CSV(new_df, connection, engine, table_name='se4g_pollution'):
 
     query = f"SELECT * FROM {table_name}"
-    df = pd.read_sql_query(query, connection)
+    df = pd.read_sql_query(query, engine)
 
     df['value_datetime_begin'] = pd.to_datetime(df['value_datetime_begin'])
     new_df['value_datetime_begin'] = pd.to_datetime(new_df['value_datetime_begin'])
@@ -249,7 +239,7 @@ def update_DB_from_CSV(new_df, connection, table_name='se4g_pollution'):
         return filtered_rows
 
 
-def update_dashboard_DB_from_CSV(new_rows, connection, table_name='se4g_dashboard',
+def update_dashboard_DB_from_CSV(new_rows, connection, engine, table_name='se4g_dashboard',
     columns = ['pollutant', 'country', 'month_day', 'value_numeric_mean', 'value_datetime_begin']):
     country = {'AD': 'Andorra', 'SE': 'Sweden', 'DE': 'Germany', 'CY': 'Undefined', 'BE': 'Belgium',
                'FI': 'Finland', 'ES': 'Spain', 'CZ': 'Czech Republic', 'BG': 'Bulgaria', 'BA': 'Bosnia and Herzegovina',
@@ -267,12 +257,12 @@ def update_dashboard_DB_from_CSV(new_rows, connection, table_name='se4g_dashboar
     new_rows = new_rows.merge(daily_mean, on=['pollutant', 'network_countrycode', 'month_day'], suffixes=('', '_mean'))
 
     new_rows['country'] = new_rows['network_countrycode'].map(country)
-    new_rows = new_rows[columns].copy()
     new_rows = new_rows.drop_duplicates().reset_index(drop=True)
     new_rows = new_rows.sort_values('month_day')
+    new_rows = new_rows[columns].copy()
 
     query = f"SELECT * FROM {table_name}"
-    df = pd.read_sql_query(query, connection)
+    df = pd.read_sql_query(query, engine)
 
     df_value_datetime_begin = pd.to_datetime(df['value_datetime_begin']).dt.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -381,14 +371,14 @@ def update_dataset(new_df, folder_out = 'data'):
         # Filter rows from new_df based on the datetime
         filtered_rows = new_df[new_df['value_datetime_begin'] > df['value_datetime_begin'].max()]
         if filtered_rows.empty:
-            print("Nothing to update inside dataset ",fileName)
+            print("Nothing to update inside dataset ->",fileName)
         elif not filtered_rows.empty:
             # Update the dataset by adding the filtered rows
             updated_df = pd.concat([df, filtered_rows], ignore_index=True)
 
             # Save the updated dataset
             updated_df.to_csv(full_path, index=False)
-            print("Dataset ",fileName," updated successfully")
+            print("Dataset ->",fileName," updated successfully")
 
             # Save locally for backup
             '''backup_dir = "C:/Users/Utente/Documents/GitHub/SE4GEO-backup"
@@ -421,20 +411,17 @@ def update_dashboard_dataset(df,folder_out = 'data'):
 
     # Convert 'value_datetime_end' to datetime objects and extract the day
     datetime_objects = df['value_datetime_end'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S%z'))
-    df['day'] = datetime_objects.dt.day
+    df['month_day'] = datetime_objects.dt.strftime('%m%d')
     
     # Compute daily mean of 'value_numeric' for each 'pollutant' and 'network_countrycode'
     daily_mean = df.groupby(['pollutant', 'network_countrycode', 'day'])['value_numeric'].mean().reset_index()
     
     # Merge the daily mean back to the original dataframe
     df = df.merge(daily_mean, on=['pollutant', 'network_countrycode', 'day'], suffixes=('', '_mean'))
-    
-    # Convert 'value_datetime_end' to int64 type
-    #df['value_datetime_end'] = datetime_objects.apply(lambda x: x.strftime('%m%d%H')).astype('int64')
 
     df['country'] = df['network_countrycode'].map(country)
     #df = df[['pollutant', 'country', 'day', 'value_numeric_mean']].copy()
-    df = df[['pollutant', 'country', 'day', 'value_numeric_mean','value_datetime_begin']].copy()
+    df = df[['pollutant', 'country', 'month_day', 'value_numeric_mean','value_datetime_begin']].copy()
 
     df = df.drop_duplicates().reset_index(drop=True)
     df = df.sort_values('day')
@@ -444,14 +431,14 @@ def update_dashboard_dataset(df,folder_out = 'data'):
         
         filtered_rows = df[df['value_datetime_begin'] > old_df['value_datetime_begin'].max()]
         if filtered_rows.empty:
-            print("Nothing to update inside dataset",fileName)
+            print("Nothing to update inside dataset ->",fileName)
         elif not filtered_rows.empty:
             updated_df = pd.concat([old_df, filtered_rows], ignore_index=True)
             updated_df.to_csv(full_path, index=False)
-            print("Dataset ",fileName," updated successfully")
+            print("Dataset ->",fileName," updated successfully")
     else: 
          df.to_csv(full_path, index=False)
-         print("Dataset ",fileName," created successfully")
+         print("Dataset ->",fileName," created successfully")
         
 
      
