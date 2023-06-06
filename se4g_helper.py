@@ -183,7 +183,6 @@ def download_DB(
     # Close the cursor 
     cur.close()
 #conn.close()
-
 ############################################## DB from CSV ##############################################
 
 def insert_data_from_CSV(table_name, df, conn, df_columns = ['station_code', 
