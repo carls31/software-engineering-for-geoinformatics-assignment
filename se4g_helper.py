@@ -5,6 +5,7 @@ from datetime import datetime
 import ipywidgets as widgets
 from IPython.display import display
 from sqlalchemy import create_engine
+import psycopg2
 #import codecs
 
 
@@ -525,14 +526,23 @@ def DB_login():
             port = '5432'
             # Connect to the database
             file = 'bin.txt'
-            with open('code/'+file, 'r') as f:
+            '''with open('code/'+file, 'r') as f:
                 engine = create_engine('postgresql://'+db_username+':'+f.read()+'@'+ip+':'+port+'/'+db) 
-            con = engine.connect()
+            con = engine.connect()'''
+
+            with open('code/'+file, 'r') as f:
+                conn = psycopg2.connect(
+                    host = ip,
+                    database = db,
+                    user = db_username,
+                    password = f.read()
+                )
+            
             # Perform any necessary database operations
             # ...
             # Return the database connection or perform any other actions
-            print("Login successful! Connected with",ip)
-            return con
+            print("Connected with",ip)
+            return conn
         else:
             print("Invalid username or password.")
 
@@ -614,6 +624,7 @@ def login_required():
 
         if login.check_credentials(username, password):
             
+            # user EMPA abilitated
 
             print("Login successful!")
             
