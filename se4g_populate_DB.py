@@ -11,4 +11,6 @@ conn = psycopg2.connect(
 print('connected with ',ip)
 
 download_DB(connection=conn)
+
+
 conn.close()
