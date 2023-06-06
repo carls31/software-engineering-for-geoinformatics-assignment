@@ -222,7 +222,15 @@ def update_DB_from_CSV(new_df, connection, engine, table_name='se4g_pollution'):
     #new_df.loc[:, 'value_datetime_begin'] = pd.to_datetime(new_df['value_datetime_begin'])
 
     # Filter rows from new_df based on the datetime
-    filtered_rows = new_df[new_df['value_datetime_begin'] > df['value_datetime_begin'].max()]
+    #filtered_rows = new_df[new_df['value_datetime_begin'] > df['value_datetime_begin'].max()]
+    #filtered_rows = pd.concat([new_df, df], ignore_index=True).drop_duplicates()
+
+    # Merge new_df and df to identify the rows in new_df that are not in df
+    merged_df = new_df.merge(df, indicator=True, how='left')
+
+    # Select the rows from new_df that are not present in df
+    filtered_rows = merged_df[merged_df['_merge'] == 'left_only'].drop(columns='_merge')
+    # filtered_rows contains the rows from new_df that are not present in df
 
     if filtered_rows.empty:
         print("Nothing to update inside database ",table_name)
@@ -252,6 +260,8 @@ def update_dashboard_DB_from_CSV(new_rows, connection, engine, table_name='se4g_
 
     # Compute daily mean of 'value_numeric' for each 'pollutant' and 'network_countrycode'
     daily_mean = new_rows.groupby(['pollutant', 'network_countrycode', 'month_day'])['value_numeric'].mean().reset_index()
+    # Apply round( , 3) to all elements in daily_mean
+    daily_mean = daily_mean.apply(lambda x: round(x, 3))
 
     # Merge the daily mean back to the original dataframe
     new_rows = new_rows.merge(daily_mean, on=['pollutant', 'network_countrycode', 'month_day'], suffixes=('', '_mean'))
@@ -411,29 +421,31 @@ def update_dashboard_dataset(df,folder_out = 'data'):
 
     # Convert 'value_datetime_end' to datetime objects and extract the day
     datetime_objects = df['value_datetime_end'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S%z'))
+    df['value_datetime_begin'] = pd.to_datetime(df['value_datetime_begin']).dt.strftime('%Y-%m-%d %H:%M:%S')
     df['month_day'] = datetime_objects.dt.strftime('%m%d')
     
     # Compute daily mean of 'value_numeric' for each 'pollutant' and 'network_countrycode'
-    daily_mean = df.groupby(['pollutant', 'network_countrycode', 'day'])['value_numeric'].mean().reset_index()
+    daily_mean = df.groupby(['pollutant', 'network_countrycode', 'month_day'])['value_numeric'].mean().reset_index()
     
     # Merge the daily mean back to the original dataframe
-    df = df.merge(daily_mean, on=['pollutant', 'network_countrycode', 'day'], suffixes=('', '_mean'))
+    df = df.merge(daily_mean, on=['pollutant', 'network_countrycode', 'month_day'], suffixes=('', '_mean'))
 
     df['country'] = df['network_countrycode'].map(country)
-    #df = df[['pollutant', 'country', 'day', 'value_numeric_mean']].copy()
     df = df[['pollutant', 'country', 'month_day', 'value_numeric_mean','value_datetime_begin']].copy()
 
     df = df.drop_duplicates().reset_index(drop=True)
-    df = df.sort_values('day')
+    
     
     if os.path.isfile(full_path):
         old_df = pd.read_csv(full_path)
         
         filtered_rows = df[df['value_datetime_begin'] > old_df['value_datetime_begin'].max()]
+        filtered_rows = filtered_rows.dropna()
         if filtered_rows.empty:
             print("Nothing to update inside dataset ->",fileName)
         elif not filtered_rows.empty:
             updated_df = pd.concat([old_df, filtered_rows], ignore_index=True)
+            updated_df = updated_df.sort_values(by=['month_day', 'country', 'pollutant'])
             updated_df.to_csv(full_path, index=False)
             print("Dataset ->",fileName," updated successfully")
     else: 
