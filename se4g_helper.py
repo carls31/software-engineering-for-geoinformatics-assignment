@@ -5,7 +5,6 @@ from datetime import datetime
 import ipywidgets as widgets
 from IPython.display import display
 from sqlalchemy import create_engine
-import psycopg2
 #import codecs
 
 
@@ -25,7 +24,18 @@ countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','ES','DK','EE','FI','SE
 pollutants= ['SO2','NO','NO2','CO','PM10']
 
 ############################################ DB transition ############################################
-
+import psycopg2
+def connect_right_now():
+    ip = '192.168.30.19'
+    ip = 'localhost'
+    conn = psycopg2.connect(
+        host = ip,
+        database = "se4g",
+        user = "postgres",
+        password = "carIs3198"
+    )
+    print('connected with ',ip)
+    return conn
 
 def insert_data(table_name, rows, conn, columns):
     cur = conn.cursor()
@@ -72,11 +82,11 @@ def update_DB(new_rows, connection, table_name='se4g_pollution_DB', columns=None
     results = cur.fetchall()
 
     # Get the column names from the cursor description
-    all_columns = [desc[0] for desc in cur.description]
+    #all_columns = [desc[0] for desc in cur.description]
 
     # Use all columns if specific columns are not provided
-    if not columns:
-        columns = all_columns
+    #if not columns:
+    #    columns = all_columns
 
     # Convert the results to a set of tuples for efficient comparison
     existing_data = {tuple(row) for row in results}
@@ -142,6 +152,7 @@ def download_DB(
         cur.execute(create_table_statement)
         connection.commit()
     print('countries', COUNTRIES)
+    all_rows = []
     for country in COUNTRIES:
         for pollutant in POLLUTANTS:
             downloadFile = f"{ServiceUrl}/{country}_{pollutant}.csv"
@@ -178,8 +189,8 @@ def download_DB(
 
                 # Update the database table with new rows if not already present
                 updated_rows = update_DB(new_rows, connection, table_name, df_columns)
-
-                #return updated_rows
+                all_rows.append(updated_rows)
+    return all_rows
 
     # Close the cursor 
     cur.close()
