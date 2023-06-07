@@ -162,7 +162,7 @@ def download_DB(
             file_content = requests.get(downloadFile).content
             file_content_str = file_content.decode('utf-8-sig')
 
-            # Split the string into lines and split each line by comma (change delimiter as per your CSV format)
+            # Split the string into lines and split each line by comma (change delimiter)
             lines = file_content_str.splitlines()
             lines = file_content_str.strip().split('\n')
 
@@ -173,14 +173,14 @@ def download_DB(
                 # Create a list of values to be inserted
                 data = [line.split(',') for line in lines]
 
-                # Get the column names from the CSV file
-                csv_columns = data[0]
+                # Get the column names from the file
+                columns = data[0]
 
-                # Create a dictionary to map CSV columns to indices
-                csv_column_dict = {col: index for index, col in enumerate(csv_columns)}
+                # Create a dictionary to map columns to indices
+                column_dict = {col: index for index, col in enumerate(columns)}
 
                 # Filter the data to include only the desired columns
-                filtered_data = [[row[csv_column_dict[col]] for col in df_columns] for row in data[1:]]
+                filtered_data = [[row[column_dict[col]] for col in df_columns] for row in data[1:]]
                 
                 new_rows = [tuple(row) for row in filtered_data]
 
@@ -190,10 +190,11 @@ def download_DB(
                 # Update the database table with new rows if not already present
                 updated_rows = update_DB(new_rows, connection, table_name, df_columns)
                 all_rows.append(updated_rows)
-    return all_rows
 
     # Close the cursor 
     cur.close()
+
+    return all_rows
 #conn.close()
 ############################################## DB from CSV ##############################################
 
