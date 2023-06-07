@@ -107,13 +107,7 @@ def update_DB(new_rows, connection, table_name='se4g_pollution_DB', columns=None
 
     return filtered_rows
 
-
-# Download and get the dataframe file name
-def download_DB(
-    connection,
-    COUNTRIES=countries,
-    POLLUTANTS=pollutants,
-    df_columns=[
+df_columns=[
         'station_code',
         'station_name',
         'station_altitude',
@@ -123,7 +117,28 @@ def download_DB(
         'value_datetime_end',
         'value_datetime_updated',
         'value_numeric',
-    ],
+        'samplingpoint_x',
+        'samplingpoint_y'
+    ]
+
+data_type = ['VARCHAR',
+            'VARCHAR',
+            'FLOAT',
+            'CHAR(2)',
+            'VARCHAR',
+            'VARCHAR',
+            'VARCHAR',
+            'VARCHAR',
+            'FLOAT',
+            'FLOAT',
+            'FLOAT']
+
+# Download and get the dataframe file name
+def download_DB(
+    connection,
+    COUNTRIES=countries,
+    POLLUTANTS=pollutants,
+    df_columns=df_columns,
     table_name='se4g_pollution_DB'
 ):
     print('-----------------------------------------------------------------------')
@@ -137,15 +152,7 @@ def download_DB(
     # Check if the table exists, create it if it doesn't
     if not table_exists(table_name, connection):
 
-        data_type = ['VARCHAR',
-            'VARCHAR',
-            'FLOAT',
-            'CHAR(2)',
-            'VARCHAR',
-            'VARCHAR',
-            'VARCHAR',
-            'VARCHAR',
-            'FLOAT']
+        data_type = data_type
         
         column_definitions = [f"{column} {data_type[i]}" for i, column in enumerate(df_columns)]
         create_table_statement = f"CREATE TABLE {table_name} ({', '.join(column_definitions)})"
@@ -198,15 +205,7 @@ def download_DB(
 #conn.close()
 ############################################## DB from CSV ##############################################
 
-def insert_data_from_CSV(table_name, df, conn, df_columns = ['station_code', 
-                                                    'station_name', 
-                                                    'station_altitude', 
-                                                    'network_countrycode', 
-                                                    'pollutant', 
-                                                    'value_datetime_begin',
-                                                    'value_datetime_end',
-                                                    'value_datetime_updated',
-                                                    'value_numeric']):
+def insert_data_from_CSV(table_name, df, conn, df_columns = df_columns):
     cur = conn.cursor()
 
     # Iterate over the DataFrame rows and insert data row by row
@@ -343,45 +342,37 @@ def download_request(COUNTRIES= countries,
 
 # Build the dataframe with the required structure
 def build_dataframe(dir,
-					COUNTRIES = countries, 
-		    		POLLUTANTS = pollutants, 
-				    folder_out = 'data',
-		    		df_columns = ['station_code', 
-							      'station_name', 
-								  'station_altitude', 
-								  'network_countrycode', 
-								  'pollutant', 
-								  'value_datetime_begin',
-								  'value_datetime_end',
-								  'value_datetime_updated',
-								  'value_numeric'] ):	
-	dfs = []
-	for country in COUNTRIES:
-		for pollutant in POLLUTANTS:
+                    COUNTRIES = countries, 
+                    POLLUTANTS = pollutants, 
+                    folder_out = 'data',
+                    df_columns = df_columns ):	
+    dfs = []
+    for country in COUNTRIES:
+        for pollutant in POLLUTANTS:
 
-			fileName = "%s_%s.csv" % (country, pollutant)
-			print(fileName)
-			file_path = os.path.join(folder_out, dir, fileName)
+            fileName = "%s_%s.csv" % (country, pollutant)
+            print(fileName)
+            file_path = os.path.join(folder_out, dir, fileName)
+            
+            if os.path.isfile(file_path):
+                with open(file_path, 'r', encoding='utf-8-sig') as file:
+                    print(file)
+                    first_line = file.readline().strip()#.decode('utf-8')
+                    
+                    if not first_line.startswith('<!DOCTYPE html'): #first_line.startswith('network_countrycode'):
+                    #print(fileName,'exist')
 
-			with open(file_path, 'r', encoding='utf-8-sig') as file:
-				print(file)
-				first_line = file.readline().strip()#.decode('utf-8')
-                
-			
-			if not first_line.startswith('<!DOCTYPE html'): #first_line.startswith('network_countrycode'):
-				#print(fileName,'exist')
+                        df_temp = pd.read_csv(file_path)
+                        dfs.append(df_temp[df_columns])
 
-				df_temp = pd.read_csv(file_path)
-				dfs.append(df_temp[df_columns])
-				
-	df_all = pd.concat(dfs, ignore_index=True)
-	print ('Dataframe assembled')
-	return df_all
+    df_all = pd.concat(dfs, ignore_index=True)
+    print ('Dataframe assembled')
+    return df_all
 
 # Update the final dataset
-def update_dataset(new_df, folder_out = 'data'):
+def update_dataset(new_df, folder_out = 'data', fileName = "se4g_pollution_dataset.csv"):
 
-    fileName = "se4g_pollution_dataset.csv"
+    
     full_path = os.path.join(folder_out, fileName)
 
     if os.path.isfile(full_path):
@@ -402,9 +393,6 @@ def update_dataset(new_df, folder_out = 'data'):
             updated_df.to_csv(full_path, index=False)
             print("Dataset ->",fileName," updated successfully")
 
-            # Save locally for backup
-            '''backup_dir = "C:/Users/Utente/Documents/GitHub/SE4GEO-backup"
-            updated_df.to_csv(backup_dir, index=False)'''
             return filtered_rows
     else:
         new_df.to_csv(full_path, index=False)
