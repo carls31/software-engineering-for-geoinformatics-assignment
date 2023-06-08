@@ -8,6 +8,7 @@ from sqlalchemy import create_engine
 #import codecs
 
 
+
 #---------------------------------------------------------------------------------------------------------------------#
 #---------------------------------------------------------------------------------------------------------------------#
 #--                                                                                                                 --#
@@ -24,18 +25,27 @@ countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','ES','DK','EE','FI','SE
 pollutants= ['SO2','NO','NO2','CO','PM10']
 
 ############################################ DB transition ############################################
+ip = '192.168.30.19'
+ip = 'localhost'
 import psycopg2
-def connect_right_now():
-    ip = '192.168.30.19'
-    ip = 'localhost'
+def connect_right_now(ip=ip):
+
     conn = psycopg2.connect(
         host = ip,
         database = "se4g",
         user = "postgres",
         password = "carIs3198"
     )
-    print('connected with ',ip)
+    print('connected with ',ip, ' through psycopg2')
     return conn
+
+def connect_with_sqlalchemy(ip=ip):
+
+    file = 'bin.txt'
+    with open('code/'+file, 'r') as f:
+        engine = create_engine('postgresql://postgres:'+f.read()+'@'+ip+':5432/se4g') 
+    print('connected with ',ip, ' through sqlalchemy')
+    return engine
 
 def insert_data(table_name, rows, conn, columns):
     cur = conn.cursor()
@@ -311,7 +321,7 @@ def download_request(COUNTRIES= countries,
     # https://discomap.eea.europa.eu/map/fme/AirQualityUTDExport.htm
     ServiceUrl = "http://discomap.eea.europa.eu/map/fme/latest"
 
-    dir = datetime.now().strftime("%d-%m-%Y_%H_%M_%S")
+    dir = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
 
     if not os.path.exists(os.path.join(folder_out, dir)):
         if not os.path.exists(folder_out):
@@ -388,7 +398,7 @@ def update_dataset(new_df, folder_out = 'data', fileName = "se4g_pollution_datas
         elif not filtered_rows.empty:
             # Update the dataset by adding the filtered rows
             updated_df = pd.concat([df, filtered_rows], ignore_index=True)
-
+            updated_df = updated_df.sort_values(by='value_datetime_begin')
             # Save the updated dataset
             updated_df.to_csv(full_path, index=False)
             print("Dataset ->",fileName," updated successfully")
@@ -421,9 +431,9 @@ def update_dashboard_dataset(df,folder_out = 'data'):
 
     # Convert 'value_datetime_end' to datetime objects and extract the day
     datetime_objects = df['value_datetime_end'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S%z'))
-    df['value_datetime_begin'] = pd.to_datetime(df['value_datetime_begin']).dt.strftime('%Y-%m-%d %H:%M:%S')
     df['month_day'] = datetime_objects.dt.strftime('%m%d')
-    
+    #df['value_datetime_begin'] = pd.to_datetime(df['value_datetime_begin']).dt.strftime('%Y-%m-%d %H:%M:%S')
+
     # Compute daily mean of 'value_numeric' for each 'pollutant' and 'network_countrycode'
     daily_mean = df.groupby(['pollutant', 'network_countrycode', 'month_day'])['value_numeric'].mean().reset_index()
     
@@ -431,15 +441,15 @@ def update_dashboard_dataset(df,folder_out = 'data'):
     df = df.merge(daily_mean, on=['pollutant', 'network_countrycode', 'month_day'], suffixes=('', '_mean'))
 
     df['country'] = df['network_countrycode'].map(country)
-    df = df[['pollutant', 'country', 'month_day', 'value_numeric_mean','value_datetime_begin']].copy()
+    df = df[['pollutant', 'country', 'month_day', 'value_numeric_mean']].copy()
 
     df = df.drop_duplicates().reset_index(drop=True)
-    
+    df = df.sort_values('month_day')
     
     if os.path.isfile(full_path):
         old_df = pd.read_csv(full_path)
         
-        filtered_rows = df[df['value_datetime_begin'] > old_df['value_datetime_begin'].max()]
+        filtered_rows = df[df['month_day'] > old_df['month_day'].max()]
         filtered_rows = filtered_rows.dropna()
         if filtered_rows.empty:
             print("Nothing to update inside dataset ->",fileName)
