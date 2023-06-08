@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime
 import ipywidgets as widgets
 from IPython.display import display
-from sqlalchemy import create_engine
+
 #import codecs
 
 
@@ -28,25 +28,31 @@ pollutants= ['SO2','NO','NO2','CO','PM10']
 # Connect to the DATABASE
 ip = '192.168.30.19'
 ip = 'localhost'
+file = 'bin.txt'
 import psycopg2
-def connect_right_now(ip=ip):
+def connect_right_now(ip=ip,file=file):
+    try:
+        with open('code/'+file, 'r') as f:
+            conn = psycopg2.connect(
+                host = ip,
+                database = "se4g",
+                user = "postgres",
+                password = f.read()
+            )
+        print('connected with ',ip, ' through psycopg2')
+        return conn
+    except psycopg2.Error as e:
+        print(f"Error connecting to the database: {e}")
 
-    conn = psycopg2.connect(
-        host = ip,
-        database = "se4g",
-        user = "postgres",
-        password = "carIs3198"
-    )
-    print('connected with ',ip, ' through psycopg2')
-    return conn
-
-def connect_with_sqlalchemy(ip=ip):
-
-    file = 'bin.txt'
-    with open('code/'+file, 'r') as f:
-        engine = create_engine('postgresql://postgres:'+f.read()+'@'+ip+':5432/se4g') 
-    print('connected with ',ip, ' through sqlalchemy')
-    return engine
+from sqlalchemy import create_engine
+def connect_with_sqlalchemy(ip=ip,file=file):
+    try:
+        with open('code/'+file, 'r') as f:
+            engine = create_engine('postgresql://postgres:'+f.read()+'@'+ip+':5432/se4g') 
+        print('connected with ',ip, ' through sqlalchemy')
+        return engine
+    except create_engine.Error as e:
+        print(f"Error connecting to the database: {e}")
 
 def insert_data(table_name, rows, conn, columns):
     cur = conn.cursor()
