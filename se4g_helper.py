@@ -8,7 +8,6 @@ from sqlalchemy import create_engine
 #import codecs
 
 
-
 #---------------------------------------------------------------------------------------------------------------------#
 #---------------------------------------------------------------------------------------------------------------------#
 #--                                                                                                                 --#
@@ -18,13 +17,15 @@ from sqlalchemy import create_engine
 #---------------------------------------------------------------------------------------------------------------------#
 
 
-
-
 #
 countries= ['AD','AT','BA','BE','BG','CH','CY','CZ','DE','ES','DK','EE','FI','SE']
 pollutants= ['SO2','NO','NO2','CO','PM10']
 
-############################################ DB transition ############################################
+######################################################################################################################
+#                                                  DB transition                                                     #
+######################################################################################################################
+
+# Connect to the DATABASE
 ip = '192.168.30.19'
 ip = 'localhost'
 import psycopg2
@@ -212,8 +213,10 @@ def download_DB(
     cur.close()
 
     return all_rows
-#conn.close()
-############################################## DB from CSV ##############################################
+
+######################################################################################################################
+#                                                      DB from CSV                                                   #                                              
+######################################################################################################################
 
 def insert_data_from_CSV(table_name, df, conn, df_columns = df_columns):
     cur = conn.cursor()
@@ -309,8 +312,9 @@ def update_dashboard_DB_from_CSV(new_rows, connection, engine, table_name='se4g_
         insert_data_from_CSV(table_name, filtered_rows, connection, df_columns=columns)
         print("Database", table_name, "updated successfully")
 
-
-############################################## CSV ##############################################
+######################################################################################################################
+#                                                          CSV                                                       #
+######################################################################################################################
 
 # Download and get the dataframe file name
 def download_request(COUNTRIES= countries,
@@ -444,7 +448,7 @@ def update_dashboard_dataset(df,folder_out = 'data'):
     df = df[['pollutant', 'country', 'month_day', 'value_numeric_mean']].copy()
 
     df = df.drop_duplicates().reset_index(drop=True)
-    df = df.sort_values('month_day')
+    
     
     if os.path.isfile(full_path):
         old_df = pd.read_csv(full_path)
