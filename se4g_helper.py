@@ -459,9 +459,12 @@ def update_dashboard_dataset(df,folder_out = 'data'):
     if os.path.isfile(full_path):
         old_df = pd.read_csv(full_path)
         
-        filtered_rows = df[df['month_day'] > old_df['month_day'].max()]
+        #print(df['month_day'].max().dtype)
+        filtered_rows = df[df['month_day'].astype('int64') > old_df['month_day'].max()]
+        
         filtered_rows = filtered_rows.dropna()
         if filtered_rows.empty:
+            
             print("Nothing to update inside dataset ->",fileName)
         elif not filtered_rows.empty:
             updated_df = pd.concat([old_df, filtered_rows], ignore_index=True)
