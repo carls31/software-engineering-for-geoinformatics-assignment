@@ -3,4 +3,4 @@ conn = connect_right_now()
 
 download_DB(connection=conn,table_name='se4g_pollution_main')
 
-conn.close()
+conn.close() 
