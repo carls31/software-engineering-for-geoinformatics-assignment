@@ -276,6 +276,23 @@ def update_DB_from_CSV(new_df, connection, engine, table_name='se4g_pollution'):
 
         return filtered_rows
 
+def update_dashboard_table(dataset = 'se4g_dashboard_dataset.csv',
+                           folder = 'data_prova',
+                           conn = connect_right_now,
+                           engine = connect_with_sqlalchemy):
+    cur = conn.cursor()
+
+    table_name = "se4g_dashboard"
+    cur.execute(f"DROP TABLE IF EXISTS {table_name}")
+
+    conn.commit()
+
+    cur.close()
+    
+
+    full_path = os.path.join(os.getcwd(),folder,dataset)
+    df = pd.read_csv(full_path)
+    df.to_sql(table_name, engine, if_exists = 'append', index=False)
 
 def update_dashboard_DB_from_CSV(new_rows, connection, engine, table_name='se4g_dashboard',
     columns = ['pollutant', 'country', 'month_day', 'value_numeric_mean', 'value_datetime_begin']):
