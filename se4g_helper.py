@@ -86,7 +86,7 @@ def table_exists(table_name, conn):
 
 
 # Update DATABASE
-def update_DB(new_rows, connection, table_name='se4g_pollution_DB', columns=None):
+def update_DB(new_rows, connection, table_name='se4g_pollution_DB', columns=None, file_name=None):
     cur = connection.cursor()
 
     # Generate the SQL SELECT statement
@@ -117,7 +117,7 @@ def update_DB(new_rows, connection, table_name='se4g_pollution_DB', columns=None
 
         # Execute the INSERT statement to add the filtered rows
         insert_data(table_name, filtered_rows, connection, columns)
-        print("Database", table_name, "updated successfully")
+        print("Added", file_name, "to table")
 
     # Close the cursor
     cur.close()
@@ -152,11 +152,12 @@ data_type = ['VARCHAR',
 
 # Download and get the dataframe file name
 def download_DB(
-    connection,
+    connection=connect_right_now(),
     COUNTRIES=countries,
     POLLUTANTS=pollutants,
     df_columns=df_columns,
-    table_name='se4g_pollution_DB'
+    table_name='se4g_pollution_main'
+    #table_name='se4g_pollution_DB'
 ):
     print('-----------------------------------------------------------------------')
     # Set download url
@@ -212,12 +213,14 @@ def download_DB(
                 print('new_rows[:2] unfiltered',new_rows[:2])
 
                 # Update the database table with new rows if not already present
-                updated_rows = update_DB(new_rows, connection, table_name, df_columns)
+                updated_rows = update_DB(new_rows, connection, table_name, df_columns,f"{country}_{pollutant}")
                 all_rows.append(updated_rows)
+
+    print("Table", table_name, "updated successfully")
 
     # Close the cursor 
     cur.close()
-
+    connection.close()
     return all_rows
 
 ######################################################################################################################
@@ -278,21 +281,23 @@ def update_DB_from_CSV(new_df, connection, engine, table_name='se4g_pollution'):
 
 def update_dashboard_table(dataset = 'se4g_dashboard_dataset.csv',
                            folder = 'data_prova',
-                           conn = connect_right_now,
-                           engine = connect_with_sqlalchemy):
+                           conn = connect_right_now(),
+                           engine = connect_with_sqlalchemy(),
+                           table_name = "se4g_dashboard"):
     cur = conn.cursor()
 
-    table_name = "se4g_dashboard"
     cur.execute(f"DROP TABLE IF EXISTS {table_name}")
 
     conn.commit()
 
     cur.close()
-    
+    conn.close()
 
     full_path = os.path.join(os.getcwd(),folder,dataset)
     df = pd.read_csv(full_path)
     df.to_sql(table_name, engine, if_exists = 'append', index=False)
+    engine.dispose()
+    print("Table", table_name, "updated successfully")
 
 def update_dashboard_DB_from_CSV(new_rows, connection, engine, table_name='se4g_dashboard',
     columns = ['pollutant', 'country', 'month_day', 'value_numeric_mean', 'value_datetime_begin']):
