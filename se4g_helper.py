@@ -606,7 +606,7 @@ class Login:
         df.to_csv(self.path_file, index=False)
         print(f"User data saved to {self.path_file} successfully.")
 
-    def login_to_DB(self):
+    def _to_DB(self):
         user = widgets.Text(
             placeholder='Type postgres',
             description='Username:',
@@ -634,7 +634,7 @@ class Login:
 
         login_button.on_click(handle_login_button_click)
 
-    def login_required(self):
+    def _required(self):
         user = widgets.Text(
             placeholder='Type postgres',
             description='Username:',
