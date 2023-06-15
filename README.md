@@ -32,12 +32,12 @@ First of all download all the folders and files that are inside the repository:
 This RASD (Requirement Analysis and Specification Document)document outlines the requirements for the development of an interactive client-server application that allows users to access, query, and visualize air quality data from public digital archives. The system consists of a database for storing data, a web server for querying the database, and a dashboard for requesting, processing, and visualizing data. The motivation behind this project is the European Commission's agreement to phase out gasoline and diesel cars by 2035, which requires monitoring and understanding air quality. The document provides an overview of the solution, including data harmonization, preprocessing, cleaning, descriptive statistics, and forecasting. It also lists the stakeholders, actors, domain assumptions, and various use cases. The requirements include non-functional aspects such as language support, availability, and user-friendly interface, as well as functional aspects like data access, processing, scalability, and security.
 
 File:
-
--GRUPPO_GEO_RASD.pdf
+* GRUPPO_GEO_RASD.pdf
 ### Design 
 The introduction section starts by emphasizing the importance of having a clear understanding of the design goals before implementing a software project. The purpose of the document is to outline the architecture and functionality of the web application, which enables users to access, query, and visualize air quality data retrieved from public digital archives. It concludes with a mention of the Database Design and REST APIs sections, which are part of the Software Design. The Database Design involves utilizing data obtained from the API of cities and managing it using a PostgreSQL database. The REST APIs are implemented using Flask, a Python web framework, to handle user requests and interact with the web server.
 
 This repository contains all the files needed in order to run the application:
-
--GRUPPO_GEO_DD.pdf
+* GRUPPO_GEO_DD.pdf
+* helper(all folders)
+* se4g_helper.py 
 
