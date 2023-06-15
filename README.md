@@ -13,8 +13,7 @@ supporting both public authorities as well as ordinary citizens in data processi
 visualization. The purpose of this project is to design and develop an interactive client-server
 application to perform the above tasks.
 
-The accompanying documentation can be located within this repository and provides a more comprehensive understanding of the software's scope, plan, purpose, testing, and implementation than a readme file ever could.
-We have included a brief overview of the functionality and usage of our project below. It is an Open-Source Web Application designed to provide users with valuable information on air pollution and pollutants of the cities in Europe . Through the visualization of air quality data collected from sensors and additional analysis offered by the application, users gain access to comprehensive insights regarding air pollution.
+We have included a brief overview of the functionality and usage of our project below. It is an Open-Source Web Application designed to provide users with valuable information on air pollution and pollutants of the cities in Europe . Through the visualization of air quality data collected from sensors and additional analysis offered by the application, users gain access to comprehensive insights regarding air pollution. Our main goal is to create an open and collaborative platform where users can actively contribute to data enrichment, the implementation of new functionalities, and the development of custom models.
 
 The team of developers is composed by the following people:
 
