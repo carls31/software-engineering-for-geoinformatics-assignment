@@ -8,7 +8,7 @@ The application required Anaconda or mamba being installed. After cloning the re
 ```sh
 conda env create -f se4g.yml
 ```
-Alternatively you should also consider to fork the repository for having your own copy. 
+Alternatively you could also consider to fork the repository for having your own copy. 
      
  and the dashboard are included in the folder:
  * The functions are defined inside: se4g_helper.py
@@ -23,7 +23,7 @@ Login and go to 2. otherwise Register following the instructions in 1.
 1. Select the user profile
  * GEO User: This is an Environmental Engineer who, in addition to having access to the dashboard, can also download existing data and, most importantly, upload new data. This user has the ability to contribute to the enrichment of available data.
  * MTM User: This profile is dedicated to Mathematical Engineers or professionals such as Data Scientists who can use the dashboard to visualize available data and develop numerical, computational, or statistical models. This user has the ability to utilize the data for analysis and the development of custom models.
- * 
+
 * :warning:  default basic profile will be available that does not require registration, allowing users to access the dashboard without further formalities.
 
 After your registration has been approved
