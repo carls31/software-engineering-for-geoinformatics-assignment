@@ -36,6 +36,7 @@ Download the file:
 The introduction section starts by emphasizing the importance of having a clear understanding of the design goals before implementing a software project. The purpose of the document is to outline the architecture and functionality of the web application, which enables users to access, query, and visualize air quality data retrieved from public digital archives. It concludes with a mention of the Database Design and REST APIs sections, which are part of the Software Design. The Database Design involves utilizing data obtained from the API of cities and managing it using a PostgreSQL database. The REST APIs are implemented using Flask, a Python web framework, to handle user requests and interact with the web server.
 The document can be found in this file:
 * GRUPPO_GEO_DD.pdf
+
 You need to have an Anaconda environment with the following libraries installed:
     
        - flask
