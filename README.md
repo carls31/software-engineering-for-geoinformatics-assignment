@@ -53,5 +53,10 @@ This repository contains all the files needed in order to run the application:
 *
 
 ## 2.2 HOW TO RUN THE APPLICATION
-#continua
+The project aims to be open-source, allowing it to remain constantly updated. The platform, represented by a notebook transformed into a dashboard, serves as the main interface for users.
+1. Select the type of user. You can decide between:
+* GEO User: This is an Environmental Engineer who, in addition to having access to the dashboard, can also download existing data and, most importantly, upload new data. This user has the ability to contribute to the enrichment of available data.
+* CS User: This profile is intended for Computer Engineers or professionals such as Software Developers who can access the source code to implement new functionalities. They are actively able to contribute to the project's evolution.
+* MTM User: This profile is dedicated to Mathematical Engineers or professionals such as Data Scientists who can use the dashboard to visualize available data and develop numerical, computational, or statistical models. This user has the ability to utilize the data for analysis and the development of custom models.
+2. Select a city in Europe of which you want to retrieve data
 
