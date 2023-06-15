@@ -50,14 +50,8 @@ You need to have an Anaconda environment with the following libraries installed:
 This repository contains all the files needed in order to run the application:
 * helper(all folders)
 * se4g_helper.py (essential components for ensuring the functionality of the application)
+*
 
 ## 2.2 HOW TO RUN THE APPLICATION
 #continua
-To run the Web Application you need to :
-1. have postgreSQL-postGIS installed on your personal computer
-2. have an Anaconda environment with the previously mentioned libraries installed
-3. modify  .txt file inserting the name of you're postgreSQL database, username and password
-4. launch the start.py script, you need to run it only the first time, for the next runs you must skip this passage
-5. launch the .py script
-6. open the browser at http://127.0.0.1:8050/
-7. login/register to the  WebApp
+
