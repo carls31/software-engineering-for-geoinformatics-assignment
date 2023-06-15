@@ -541,7 +541,7 @@ class Register:
 
         self.login = Login()
     
-    def add_registration(self):
+    def _new_user(self):
         rgstr_usr = input('Insert your username: ')
         rgstr_psw = input('Insert your password: ')
         self.register_list[rgstr_usr] = rgstr_psw
@@ -553,9 +553,9 @@ class Register:
             del self.register_list[username]
             self.save_registrations_to_csv()
     
-    def review_registrations(self):
+    def _review_registrations(self):
         def approve_user(username, password):
-            self.login.register_user(username, password)
+            self.login._new_user(username, password)
             self.remove_registration(username, password)
             print(f"{username} admitted!")
 
@@ -627,7 +627,7 @@ class Login:
             password = psw.value
 
             if self.check_credentials(username, password):
-                conn = self.connect_right_now()
+                conn = connect_right_now()
                 return conn
             else:
                 print("Invalid username or password.")
