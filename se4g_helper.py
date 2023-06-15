@@ -539,7 +539,11 @@ class Login:
             self.user_list = dict(zip(df['Username'], df['Password']))
     
     def check_credentials(self, username, password):
+        #print(f'insersted username {username}')
+        #print(f'insersted password {password}')
         if username in self.user_list:
+            #print(f'{password} is inside the user list')
+            #print(f'the correct password of the user is {self.user_list[username]}')
             if self.user_list[username] == password:
                 return True
         return False
@@ -579,12 +583,13 @@ def login_to_DB():
     def handle_login_button_click(button):
         username = user.value
         password = psw.value
+        #print(f'user.value {user.value} inside handle_login_button_click')
+        #print(f'psw.value {psw.value} inside handle_login_button_click')
 
         if login.check_credentials(username, password):
             
             conn = connect_right_now()
             
-            print("Connected with",ip)
             return conn
         else:
             print("Invalid username or password.")
@@ -605,8 +610,10 @@ class Register:
 
         self.login = Login()
     
-    def add_registration(self, username, password):
-        self.register_list[username] = password
+    def add_registration(self):
+        rgstr_usr = input('Insert your username: ')
+        rgstr_psw = input('Insert your password: ')
+        self.register_list[rgstr_usr] = rgstr_psw
         self.save_registrations_to_csv()
     
     def remove_registration(self, username, password):
