@@ -25,12 +25,16 @@ pollutants= ['SO2','NO','NO2','CO','PM10']
 #                                                  DB transition                                                     #
 ######################################################################################################################
 
-# Connect to the DATABASE
+# Connect to DB
 ip = '192.168.30.19'
 ip = 'localhost'
 file = 'bin.txt'
 import psycopg2
-def connect_right_now(ip=ip,file=file):
+
+def connect_right_now(
+    ip: str = ip,
+    file: str = file
+):
     try:
         with open('code/'+file, 'r') as f:
             conn = psycopg2.connect(
@@ -414,7 +418,6 @@ def build_dataframe(dir,
 # Update the final dataset
 def update_dataset(new_df, folder_out = 'data', fileName = "se4g_pollution_dataset.csv"):
 
-    
     full_path = os.path.join(folder_out, fileName)
 
     if os.path.isfile(full_path):
@@ -459,7 +462,6 @@ def update_dashboard_dataset(df,folder_out = 'data'):
            'CH':'Switzerland',
            'AT':'Austria', 
            'DK':'Denmark'}
-
 
     # Convert 'value_datetime_end' to datetime objects and extract the day
     datetime_objects = df['value_datetime_end'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S%z'))
