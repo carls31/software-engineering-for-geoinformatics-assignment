@@ -18,7 +18,7 @@ The documentations can be found:
  * GRUPPO_GEO_RASD.pdf
  * GRUPPO_GEO-DD.pdf
  
-### How To Run The Application
+### How To Run
 Login and go to 2. otherwise Register following the instructions in 1.
 1. Select the user profile
  * GEO User: This is an Environmental Engineer who, in addition to having access to the dashboard, can also download existing data and, most importantly, upload new data. This user has the ability to contribute to the enrichment of available data.
