@@ -12,7 +12,7 @@ Alternatively, you can fork the repository to have your own copy.
 
 The main functions are defined in the file 'se4g_helper.py,' and the dashboard is included in 'se4g_JupyterDash_demo.ipynb'.
 
-The documentations can be found:
+Documentation files:
  * GRUPPO_GEO_RASD.pdf
  * GRUPPO_GEO-DD.pdf
  
