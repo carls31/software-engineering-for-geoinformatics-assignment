@@ -26,7 +26,7 @@ Login and go to 2. otherwise Register following the instructions in 1.
 
      * :warning:  default basic profile will be available that does not require registration, allowing users to access the dashboard without further formalities.
 
-After your registration has been approved.
+Please wait for your registration request to be approved.
 
 2. Select a city in Europe of which you want to retrieve data
  * dashboard daily mean
