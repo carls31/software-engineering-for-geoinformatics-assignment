@@ -49,7 +49,6 @@ You need to have an Anaconda environment with the following libraries installed:
 This repository contains all the files needed in order to run the application:
 * helper(all folders)
 * se4g_helper.py (essential components for ensuring the functionality of the application)
-*
 
 ## 2.2 HOW TO RUN THE APPLICATION
 The project aims to be open-source, allowing it to remain constantly updated. The platform, represented by a notebook transformed into a dashboard, serves as the main interface for users.
