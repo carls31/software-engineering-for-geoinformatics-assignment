@@ -26,21 +26,30 @@ pollutants= ['SO2','NO','NO2','CO','PM10']
 ######################################################################################################################
 
 # Connect to DB
+file = 'bin.txt'
+
+db_user = "postgres"
+
 ip = '192.168.30.19'
 ip = 'localhost'
-file = 'bin.txt'
+
+database = "se4g"
+port = "5432"
+
 import psycopg2
 
 def connect_right_now(
+    file: str = file,
+    db_user: str = db_user,
     ip: str = ip,
-    file: str = file
+    database: str = database,
 ):
     try:
         with open('code/'+file, 'r') as f:
             conn = psycopg2.connect(
                 host = ip,
-                database = "se4g",
-                user = "postgres",
+                database = database,
+                user = db_user,
                 password = f.read()
             )
         print('connected with ',ip, ' through psycopg2')
@@ -49,10 +58,16 @@ def connect_right_now(
         print(f"Error connecting to the database: {e}")
 
 from sqlalchemy import create_engine
-def connect_with_sqlalchemy(ip=ip,file=file):
+def connect_with_sqlalchemy(
+    file: str = file,
+    db_user: str = db_user,
+    ip: str = ip,
+    database: str = database,
+    port: str = port
+):
     try:
         with open('code/'+file, 'r') as f:
-            engine = create_engine('postgresql://postgres:'+f.read()+'@'+ip+':5432/se4g') 
+            engine = create_engine(f'postgresql://{db_user}:{f.read()}@{ip}:{port}/{database}') 
         print('connected with ',ip, ' through sqlalchemy')
         return engine
     except create_engine.Error as e:
@@ -567,27 +582,8 @@ def login_to_DB():
 
         if login.check_credentials(username, password):
             
-            ip = '192.168.30.19'
-            db = 'se4g'
-            db_username = 'postgres'
-            port = '5432'
-            # Connect to the database
-            file = 'bin.txt'
-            '''with open('code/'+file, 'r') as f:
-                engine = create_engine('postgresql://'+db_username+':'+f.read()+'@'+ip+':'+port+'/'+db) 
-            con = engine.connect()'''
-
-            with open('code/'+file, 'r') as f:
-                conn = psycopg2.connect(
-                    host = ip,
-                    database = db,
-                    user = db_username,
-                    password = f.read()
-                )
+            conn = connect_right_now()
             
-            # Perform any necessary database operations
-            # ...
-            # Return the database connection or perform any other actions
             print("Connected with",ip)
             return conn
         else:
