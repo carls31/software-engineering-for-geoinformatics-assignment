@@ -34,3 +34,5 @@ Please wait for your registration request to be approved.
  * histograms
  * select pollutant and shows timeseries of all the cities 
  * correlation matrix
+
+Feel free to explore and utilize these features for your analysis and model development.
