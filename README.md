@@ -8,7 +8,7 @@ The application required Anaconda or mamba being installed. After cloning the re
 ```sh
 conda env create -f se4g.yml
 ```
-Or fork the repository for having your own copy. The main modules depends on [botorch](https://botorch.org/) and [pytorch](https://pytorch.org/).
+Or fork the repository for having your own copy. 
      
  and the dashboard are included in the folder:
  * The functions are defined inside: se4g_helper.py
