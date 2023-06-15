@@ -528,75 +528,6 @@ def update_dashboard_dataset(df,folder_out = 'data'):
 #---------------------------------------------------------------------------------------------------------------------#
 #---------------------------------------------------------------------------------------------------------------------#
 
-class Login:
-    def __init__(self):
-
-        folder = 'data'
-        filename = 'admins.csv'
-        self.path_file = os.path.join(folder,filename)
-        if os.path.isfile(self.path_file):
-            df = pd.read_csv(self.path_file)
-            self.user_list = dict(zip(df['Username'], df['Password']))
-    
-    def check_credentials(self, username, password):
-        #print(f'insersted username {username}')
-        #print(f'insersted password {password}')
-        if username in self.user_list:
-            #print(f'{password} is inside the user list')
-            #print(f'the correct password of the user is {self.user_list[username]}')
-            if self.user_list[username] == password:
-                return True
-        return False
-    
-    def register_user(self, username, password):
-        if username not in self.user_list:
-            self.user_list[username] = password
-            self.save_users_to_csv()
-            return True
-        return False
-    
-    def save_users_to_csv(self):
-        data = {'Username': list(self.user_list.keys()), 'Password': list(self.user_list.values())}
-        df = pd.DataFrame(data)
-        df.to_csv(self.filename, index=False)
-        print(f"User data saved to {self.filename} successfully.")
-        
-    
-def login_to_DB():
-    user = widgets.Text(
-        placeholder='Type postgres',
-        description='Username:',
-        disabled=False   
-    )
-
-    psw = widgets.Password(
-        placeholder='Enter password',
-        description='Password:',
-        disabled=False
-    )
-    
-    login_button = widgets.Button(description="Login")
-    display(user, psw, login_button)
-
-    login = Login()
-
-    def handle_login_button_click(button):
-        username = user.value
-        password = psw.value
-        #print(f'user.value {user.value} inside handle_login_button_click')
-        #print(f'psw.value {psw.value} inside handle_login_button_click')
-
-        if login.check_credentials(username, password):
-            
-            conn = connect_right_now()
-            
-            return conn
-        else:
-            print("Invalid username or password.")
-
-    login_button.on_click(handle_login_button_click)
-    
-
 class Register:
     def __init__(self):
         folder = 'data'
@@ -648,40 +579,88 @@ class Register:
         print(f"Registration request saved successfully.")
 
 
+class Login:
+    def __init__(self):
+        folder = 'data'
+        filename = 'admins.csv'
+        self.path_file = os.path.join(folder, filename)
+        if os.path.isfile(self.path_file):
+            df = pd.read_csv(self.path_file)
+            self.user_list = dict(zip(df['Username'], df['Password']))
 
+    def check_credentials(self, username, password):
+        if username in self.user_list and self.user_list[username] == password:
+            return True
+        return False
 
-def login_required():
-    user = widgets.Text(
-        placeholder='Type postgres',
-        description='Username:',
-        disabled=False   
-    )
+    def register_user(self, username, password):
+        if username not in self.user_list:
+            self.user_list[username] = password
+            self.save_users_to_csv()
+            return True
+        return False
 
-    psw = widgets.Password(
-        placeholder='Enter password',
-        description='Password:',
-        disabled=False
-    )
-    
-    login_button = widgets.Button(description="Login")
-    display(user, psw, login_button)
+    def save_users_to_csv(self):
+        data = {'Username': list(self.user_list.keys()), 'Password': list(self.user_list.values())}
+        df = pd.DataFrame(data)
+        df.to_csv(self.path_file, index=False)
+        print(f"User data saved to {self.path_file} successfully.")
 
-    login = Login()
+    def login_to_DB(self):
+        user = widgets.Text(
+            placeholder='Type postgres',
+            description='Username:',
+            disabled=False   
+        )
 
-    def handle_login_button_click(button):
-        username = user.value
-        password = psw.value
+        psw = widgets.Password(
+            placeholder='Enter password',
+            description='Password:',
+            disabled=False
+        )
 
-        if login.check_credentials(username, password):
-            
-            # user EMPA abilitated
+        login_button = widgets.Button(description="Login")
+        display(user, psw, login_button)
 
-            print("Login successful!")
-            
-        else:
-            print("Invalid username or password.")
+        def handle_login_button_click(button):
+            username = user.value
+            password = psw.value
 
-    login_button.on_click(handle_login_button_click)
+            if self.check_credentials(username, password):
+                conn = self.connect_right_now()
+                return conn
+            else:
+                print("Invalid username or password.")
+
+        login_button.on_click(handle_login_button_click)
+
+    def login_required(self):
+        user = widgets.Text(
+            placeholder='Type postgres',
+            description='Username:',
+            disabled=False   
+        )
+
+        psw = widgets.Password(
+            placeholder='Enter password',
+            description='Password:',
+            disabled=False
+        )
+
+        login_button = widgets.Button(description="Login")
+        display(user, psw, login_button)
+
+        def handle_login_button_click(button):
+            username = user.value
+            password = psw.value
+
+            if self.check_credentials(username, password):
+                print("Login successful!")
+                # Perform the desired actions here after successful login
+            else:
+                print("Invalid username or password.")
+
+        login_button.on_click(handle_login_button_click)
 
 
 
