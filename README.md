@@ -8,11 +8,9 @@ The application required Anaconda or mamba being installed. After cloning the re
 ```sh
 conda env create -f se4g.yml
 ```
-Alternatively you could also consider to fork the repository for having your own copy. 
-     
- and the dashboard are included in the folder:
- * The functions are defined inside: se4g_helper.py
- * The dashboard is enclosed in the file: se4g_JupyterDash_demo.ipynb
+Alternatively, you can fork the repository to have your own copy.
+
+The main functions are defined in the file 'se4g_helper.py,' and the dashboard is included in 'se4g_JupyterDash_demo.ipynb'.
 
 The documentations can be found:
  * GRUPPO_GEO_RASD.pdf
