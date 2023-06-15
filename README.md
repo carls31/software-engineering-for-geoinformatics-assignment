@@ -35,9 +35,28 @@ File:
 * GRUPPO_GEO_RASD.pdf
 ### Design 
 The introduction section starts by emphasizing the importance of having a clear understanding of the design goals before implementing a software project. The purpose of the document is to outline the architecture and functionality of the web application, which enables users to access, query, and visualize air quality data retrieved from public digital archives. It concludes with a mention of the Database Design and REST APIs sections, which are part of the Software Design. The Database Design involves utilizing data obtained from the API of cities and managing it using a PostgreSQL database. The REST APIs are implemented using Flask, a Python web framework, to handle user requests and interact with the web server.
-
-This repository contains all the files needed in order to run the application:
+The document can be found in this file:
 * GRUPPO_GEO_DD.pdf
+You need to have an Anaconda environment with the following libraries installed:
+    
+    - flask
+     - geopandas 
+     - sqlalchemy
+     - psycoppg2
+     - json
+     - pandas
+     
+This repository contains all the files needed in order to run the application:
 * helper(all folders)
-* se4g_helper.py 
+* se4g_helper.py (essential components for ensuring the functionality of the application)
 
+## 2.2 HOW TO RUN THE APPLICATION
+#continua
+To run the Web Application you need to :
+1. have postgreSQL-postGIS installed on your personal computer
+2. have an Anaconda environment with the previously mentioned libraries installed
+3. modify  .txt file inserting the name of you're postgreSQL database, username and password
+4. launch the start.py script, you need to run it only the first time, for the next runs you must skip this passage
+5. launch the .py script
+6. open the browser at http://127.0.0.1:8050/
+7. login/register to the  WebApp
