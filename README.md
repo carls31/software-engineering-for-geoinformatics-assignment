@@ -2,7 +2,7 @@
 Project Assignment of the course "Software Engineering for Geoinformatics" at Politecnico di Milano during the academic year 2022/2023
 
 Develop an interactive application for air quality monitoring
-
+# 1.INTRODUCTION
 Public authorities collect air quality and weather observations in near-real time from ground
 sensor stations and store them in digital archives. Generally, ground sensors data are
 composed of long time series of observations and sensors metadata (including coordinates,
