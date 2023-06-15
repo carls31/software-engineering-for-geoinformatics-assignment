@@ -543,7 +543,7 @@ class Login:
         print(f"User data saved to {self.filename} successfully.")
         
     
-def DB_login():
+def login_to_DB():
     user = widgets.Text(
         placeholder='Type postgres',
         description='Username:',

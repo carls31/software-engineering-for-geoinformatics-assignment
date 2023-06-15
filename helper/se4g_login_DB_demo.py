@@ -21,7 +21,7 @@ def login():
     return widgets.VBox([user, psw])
 
 
-def login_required():
+def login_to_DB():
     user = widgets.Text(
         placeholder='Type postgres',
         description='Username:',
