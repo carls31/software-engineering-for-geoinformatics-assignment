@@ -1,7 +1,6 @@
 # SE4GEO Project
-**Project Assignment of the course "Software Engineering for Geoinformatics" at Politecnico di Milano during the academic year 2022/2023**
+**Project Assignment of the course "Software Engineering for Geoinformatics" at Politecnico di Milano.**
 
-# Introduction
 We have included a brief overview of the functionality and usage of our project below. It is an Open-Source Web Application designed to provide users with valuable information on air pollution and pollutants of the cities in Europe. Our main goal is to create an open and collaborative platform where users can actively contribute to data enrichment, the implementation of new functionalities, and the development of custom models.
 
 ### Installation
