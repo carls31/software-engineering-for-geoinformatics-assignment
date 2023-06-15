@@ -17,8 +17,10 @@ The introduction section starts by emphasizing the importance of having a clear 
      
 The main functions and the dashboard are included in the folder:
  * helper
+ * 
 The dashboard is enclosed in the file:
   * se4g_JupyterDash_demo.ipynb
+  
 The documents are contained within the:
  * GRUPPO_GEO_RASD.pdf
  * GRUPPO_GEO-DD.pdf
