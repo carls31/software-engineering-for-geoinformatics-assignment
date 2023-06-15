@@ -152,7 +152,7 @@ data_type = ['VARCHAR',
 
 # Download and get the dataframe file name
 def download_DB(
-    connection=connect_right_now(),
+    connection,
     COUNTRIES=countries,
     POLLUTANTS=pollutants,
     df_columns=df_columns,
@@ -279,10 +279,10 @@ def update_DB_from_CSV(new_df, connection, engine, table_name='se4g_pollution'):
 
         return filtered_rows
 
-def update_dashboard_table(dataset = 'se4g_dashboard_dataset.csv',
+def update_dashboard_table(conn,
+                           engine,
+                           dataset = 'se4g_dashboard_dataset.csv',
                            folder = 'data_prova',
-                           conn = connect_right_now(),
-                           engine = connect_with_sqlalchemy(),
                            table_name = "se4g_dashboard"):
     cur = conn.cursor()
 
