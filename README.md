@@ -39,13 +39,14 @@ The document can be found in this file:
 * GRUPPO_GEO_DD.pdf
 You need to have an Anaconda environment with the following libraries installed:
     
-    - flask
-     - geopandas 
-     - sqlalchemy
-     - psycoppg2
-     - json
-     - pandas
+       - flask
+       - geopandas 
+       - sqlalchemy
+       - psycoppg2
+       - json
+       - pandas
      
+
 This repository contains all the files needed in order to run the application:
 * helper(all folders)
 * se4g_helper.py (essential components for ensuring the functionality of the application)
