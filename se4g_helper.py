@@ -671,3 +671,27 @@ class Login:
 #--                                                                                                                 --#
 #---------------------------------------------------------------------------------------------------------------------#
 #---------------------------------------------------------------------------------------------------------------------#
+
+
+def create_df_from_table(table_name,conn):
+    
+    cursor = conn.cursor()
+
+    # Generate the SQL statement to select data from the source table
+    select_data_query = f"SELECT * FROM {table_name};"
+
+    # Execute the SELECT command
+    cursor.execute(select_data_query)
+
+    columns = [desc[0] for desc in cursor.description]
+
+    # Fetch all the rows
+    rows = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # Create a pandas DataFrame from the fetched rows
+    df = pd.DataFrame(rows, columns=columns)
+    print(f'df {table_name} created')
+    return df
