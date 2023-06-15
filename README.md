@@ -59,6 +59,7 @@ The project aims to be open-source, allowing it to remain constantly updated. Th
 * CS User: This profile is intended for Computer Engineers or professionals such as Software Developers who can access the source code to implement new functionalities. They are actively able to contribute to the project's evolution.
 * MTM User: This profile is dedicated to Mathematical Engineers or professionals such as Data Scientists who can use the dashboard to visualize available data and develop numerical, computational, or statistical models. This user has the ability to utilize the data for analysis and the development of custom models.
  
-:warning: **At the same time, a default basic profile will be available that does not require registration, allowing users to access the dashboard without further formalities.
+:warning:At the same time, a default basic profile will be available that does not require registration, allowing users to access the dashboard without further formalities.
+
 2. Select a city in Europe of which you want to retrieve data
 
