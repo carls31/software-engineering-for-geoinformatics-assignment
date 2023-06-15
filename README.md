@@ -15,7 +15,7 @@ application to perform the above tasks.
 
 We have included a brief overview of the functionality and usage of our project below. It is an Open-Source Web Application designed to provide users with valuable information on air pollution and pollutants of the cities in Europe . Through the visualization of air quality data collected from sensors and additional analysis offered by the application, users gain access to comprehensive insights regarding air pollution. Our main goal is to create an open and collaborative platform where users can actively contribute to data enrichment, the implementation of new functionalities, and the development of custom models.
 
-The team of developers is composed by the following people:
+The team of developers is composed by four M.Sc. Geoinformatics Engineering students:
 
        Lorenzo Carlassara
        Angelica Iseni
