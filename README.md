@@ -32,8 +32,8 @@ The application required [Anaconda](https://conda.io/projects/conda/en/latest/us
 The main functions are defined in the file `'se4g_helper.py'`, and the dashboard is included in `'se4g_JupyterDash_demo.ipynb'`.
 
 Documentation files:
- * [GRUPPO_GEO_RASD.pdf](https://github.com/carls31/SE4GEO-Lab/blob/main/GRUPPO_GEO_RASD.pdf)
- * [GRUPPO_GEO_DD.pdf](https://github.com/carls31/SE4GEO-Lab/blob/main/GRUPPO_GEO_DD.pdf)
+ * [Requirement Analysis and Specifications Document](https://github.com/carls31/SE4GEO-Lab/blob/main/GRUPPO_GEO_RASD.pdf)
+ * [Design Document](https://github.com/carls31/SE4GEO-Lab/blob/main/GRUPPO_GEO_DD.pdf)
  
 ## Usage
 
