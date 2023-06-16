@@ -136,7 +136,7 @@ def update_DB(new_rows, connection, table_name='se4g_pollution_DB', columns=None
 
         # Execute the INSERT statement to add the filtered rows
         insert_data(table_name, filtered_rows, connection, columns)
-        print("Added", file_name, "to table")
+        print(f"Added to table {table_name}")
 
     # Close the cursor
     cur.close()
@@ -171,7 +171,7 @@ data_type = ['VARCHAR',
 
 # Download and get the dataframe file name
 def download_DB(
-    connection,
+    conn,
     COUNTRIES=countries,
     POLLUTANTS=pollutants,
     df_columns=df_columns,
@@ -184,24 +184,24 @@ def download_DB(
     ServiceUrl = "http://discomap.eea.europa.eu/map/fme/latest"
 
     # Create a cursor
-    cur = connection.cursor()
+    cur = conn.cursor()
 
     # Check if the table exists, create it if it doesn't
-    if not table_exists(table_name, connection):
+    if not table_exists(table_name, conn):
 
         data_type = data_type
         
         column_definitions = [f"{column} {data_type[i]}" for i, column in enumerate(df_columns)]
         create_table_statement = f"CREATE TABLE {table_name} ({', '.join(column_definitions)})"
         cur.execute(create_table_statement)
-        connection.commit()
+        conn.commit()
     print('countries', COUNTRIES)
     all_rows = []
     for country in COUNTRIES:
         for pollutant in POLLUTANTS:
             downloadFile = f"{ServiceUrl}/{country}_{pollutant}.csv"
             # Download and save to local path
-            print('Downloading:', downloadFile)
+            print(f'Downloading: {ServiceUrl}/{country}_{pollutant}')
 
             file_content = requests.get(downloadFile).content
             file_content_str = file_content.decode('utf-8-sig')
@@ -228,18 +228,18 @@ def download_DB(
                 
                 new_rows = [tuple(row) for row in filtered_data]
 
-                print('Download finished and new_rows assembled')
-                print('new_rows[:2] unfiltered',new_rows[:2])
+                print(f'{country}_{pollutant} downloaded --> new_rows assembled')
+                #print('new_rows[:2] unfiltered',new_rows[:2])
 
                 # Update the database table with new rows if not already present
-                updated_rows = update_DB(new_rows, connection, table_name, df_columns,f"{country}_{pollutant}")
+                updated_rows = update_DB(new_rows, conn, table_name, df_columns,f"{country}_{pollutant}")
                 all_rows.append(updated_rows)
 
     print("Table", table_name, "updated successfully")
 
     # Close the cursor 
     cur.close()
-    connection.close()
+    conn.close()
     return all_rows
 
 ######################################################################################################################

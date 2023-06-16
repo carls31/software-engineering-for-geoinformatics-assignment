@@ -7,7 +7,7 @@ dir = download_request(folder_out = 'data_prova')
 df = build_dataframe(dir, folder_out = 'data_prova')
 
 # Update the main dataset & the dashboard dataset 
-new_df = update_dataset(folder_out = 'data_prova')
+new_df = update_dataset(df, folder_out = 'data_prova')
 update_dashboard_dataset(df, folder_out = 'data_prova')
 
 
