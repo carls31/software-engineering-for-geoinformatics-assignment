@@ -11,7 +11,7 @@ To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
-The application required Anaconda or mamba being installed. 
+The application required [Anaconda](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) or [Mamba](https://mamba.readthedocs.io/en/latest/user_guide/mamba.html) being installed. 
 
 ### Installation
 
@@ -23,7 +23,7 @@ The application required Anaconda or mamba being installed.
   ```sh
   conda env create -f se4g.yml 
   ```
-  If you are using mamba instead launch the command:
+  If you are using Mamba instead launch the command:
   ```sh
   mamba env create -f se4g.yml 
   ```
