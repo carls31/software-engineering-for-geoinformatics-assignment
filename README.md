@@ -41,7 +41,7 @@ Login and go to 2. otherwise Register following the instructions in 1.
      * GEO User: This is an Environmental Engineer who, in addition to having access to the dashboard, can also download existing data and, most importantly, upload new data. This user has the ability to contribute to the enrichment of available data.
      * MTM User: This profile is dedicated to Mathematical Engineers or professionals such as Data Scientists who can use the dashboard to visualize available data and develop numerical, computational, or statistical models. This user has the ability to utilize the data for analysis and the development of custom models.
 
-     * :warning:  default basic profile will be available that does not require registration, allowing users to access the dashboard without further formalities.
+     * Basic Profile: A basic profile is available by default, which does not require registration. Users with this profile can access the dashboard without any additional formalities..
 
 Please wait for your registration request to be approved.
 
