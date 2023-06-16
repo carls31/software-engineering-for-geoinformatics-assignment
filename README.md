@@ -1,4 +1,5 @@
 # SE4GEO Project
+<a name="readme-top"></a>
 **Project Assignment of the course "Software Engineering for Geoinformatics" at Politecnico di Milano.**
 
 This is an Open-Source Application designed to provide users with information on air pollution and pollutants of European cities. Our main goal is to create a collaborative platform where users can actively contribute to data enrichment, the implementation of new functionalities, and the development of custom models.
