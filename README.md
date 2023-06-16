@@ -33,7 +33,7 @@ The main functions are defined in the file `'se4g_helper.py'`, and the dashboard
 
 Documentation files:
  * `GRUPPO_GEO_RASD.pdf`
- * `GRUPPO_GEO-DD.pdf`
+ * `GRUPPO_GEO_DD.pdf`
  
 ## Usage
 
