@@ -46,11 +46,11 @@ Login and go to 2. otherwise Register following the instructions in 1.
 Please wait for your registration request to be approved.
 
 2. Select a city in Europe of which you want to retrieve data
- * dashboard daily mean
- * dashboard select day by user
- * histograms
- * select pollutant and shows timeseries of all the cities 
- * correlation matrix
+     * dashboard daily mean
+     * dashboard select day by user
+     * histograms
+     * select pollutant and shows timeseries of all the cities 
+     * correlation matrix
 
 Feel free to explore and utilize these features for your analysis and model development.
 
