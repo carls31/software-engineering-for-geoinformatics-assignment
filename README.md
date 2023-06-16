@@ -31,8 +31,8 @@ The application required Anaconda or mamba being installed.
 The main functions are defined in the file `'se4g_helper.py'`, and the dashboard is included in `'se4g_JupyterDash_demo.ipynb'`.
 
 Documentation files:
- * GRUPPO_GEO_RASD.pdf
- * GRUPPO_GEO-DD.pdf
+ * `GRUPPO_GEO_RASD.pdf`
+ * `GRUPPO_GEO-DD.pdf`
  
 ## Usage
 
