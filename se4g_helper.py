@@ -210,7 +210,7 @@ def download_DB(
             lines = file_content_str.splitlines()
             lines = file_content_str.strip().split('\n')
 
-            print('lines[0]',lines[0])
+            #print('lines[0]',lines[0])
 
             if not lines[0].startswith('<!DOCTYPE html'):
 
