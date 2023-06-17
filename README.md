@@ -16,7 +16,7 @@ The application required [Anaconda](https://conda.io/projects/conda/en/latest/us
 
 ### Installation
 
-1. Clone the repo
+1. Clone the repository
   ```sh
   git clone https://github.com/carls31/SE4GEO-Lab.git
   ```
