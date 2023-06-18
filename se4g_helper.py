@@ -4,6 +4,11 @@ import pandas as pd
 from datetime import datetime
 import ipywidgets as widgets
 from IPython.display import display
+import geopandas as gpd
+from shapely.geometry import Point
+import folium
+from folium import plugins
+import matplotlib.pyplot as plt
 
 #import codecs
 
@@ -52,7 +57,7 @@ def connect_right_now(
                 user = db_user,
                 password = f.read()
             )
-        print('connected with ',ip, ' through psycopg2')
+        #print('connected with ',ip, ' through psycopg2')
         return conn
     except psycopg2.Error as e:
         print(f"Error connecting to the database: {e}")
@@ -68,7 +73,7 @@ def connect_with_sqlalchemy(
     try:
         with open('code/'+file, 'r') as f:
             engine = create_engine(f'postgresql://{db_user}:{f.read()}@{ip}:{port}/{database}') 
-        print('connected with ',ip, ' through sqlalchemy')
+        #print('connected with ',ip, ' through sqlalchemy')
         return engine
     except create_engine.Error as e:
         print(f"Error connecting to the database: {e}")
@@ -699,31 +704,6 @@ class Login:
 #---------------------------------------------------------------------------------------------------------------------#
 
 
-def create_df_from_table(table_name='pollutant_detection',conn=None):
-    if conn is None:
-        conn = connect_right_now()
-    cursor = conn.cursor()
-
-    # Generate the SQL statement to select data from the source table
-    select_data_query = f"SELECT * FROM {table_name};"
-
-    # Execute the SELECT command
-    cursor.execute(select_data_query)
-
-    columns = [desc[0] for desc in cursor.description]
-
-    # Fetch all the rows
-    rows = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
-
-    # Create a pandas DataFrame from the fetched rows
-    df = pd.DataFrame(rows, columns=columns)
-    print(f'df {table_name} created')
-    return df
-
-
 def create_df_from_table(table_name,conn=None):
     if conn is None:
         conn = connect_right_now()
@@ -745,5 +725,203 @@ def create_df_from_table(table_name,conn=None):
 
     # Create a pandas DataFrame from the fetched rows
     df = pd.DataFrame(rows, columns=columns)
-    print(f'df {table_name} created')
+    #print(f'df {table_name} created')
     return df
+
+
+class DescriptiveStats:
+    def __init__(self):
+        self.df_pollutant = create_df_from_table(table_name='pollutant_detection')
+        self.df_station = create_df_from_table(table_name='station')
+        
+        # Dropdown widgets for country and pollutant selection
+        self.country_dropdown = widgets.Dropdown(
+            options=self.df_station['network_countrycode'].unique(),
+            description='Country:'
+        )
+
+        self.pollutant_dropdown = widgets.Dropdown(
+            description='Pollutant:'
+        )
+
+        # Text widget to display statistics
+        self.statistics_text = widgets.Textarea(
+            description='Statistics:',
+            disabled=True,
+            layout={'width': '500px', 'height': '200px'}
+        )
+
+        # Event listeners for dropdown selection
+        self.country_dropdown.observe(self.update_pollutants, 'value')
+        self.pollutant_dropdown.observe(self.update_statistics, 'value')
+
+        # Display widgets
+        display(self.country_dropdown)
+        display(self.pollutant_dropdown)
+        display(self.statistics_text)
+
+    def create_df_from_table(self, table_name):
+        # Implementation to create DataFrame from table
+        # ...
+        pass
+
+    def update_pollutants(self, change):
+        country = self.country_dropdown.value
+
+        if country:
+            pollutants = self.df_pollutant[self.df_pollutant['station_code'].isin(
+                self.df_station[self.df_station['network_countrycode'] == country]['station_code'])]['pollutant'].unique()
+            self.pollutant_dropdown.options = pollutants
+            self.pollutant_dropdown.disabled = False
+        else:
+            self.pollutant_dropdown.options = []
+            self.pollutant_dropdown.disabled = True
+
+    def update_statistics(self, change):
+        country = self.country_dropdown.value
+        pollutant = self.pollutant_dropdown.value
+
+        filtered_df = self.df_pollutant.merge(self.df_station, on='station_code')
+        filtered_df = filtered_df[(filtered_df['network_countrycode'] == country) & (filtered_df['pollutant'] == pollutant)]
+
+        mean_value = filtered_df['value_numeric'].mean()
+        max_value = filtered_df['value_numeric'].max()
+        min_value = filtered_df['value_numeric'].min()
+
+        self.statistics_text.value = f"Mean: {mean_value:.2f}\nMax: {max_value}\nMin: {min_value}"
+
+        # Update the plot
+        self.plot_statistics()
+
+    def plot_statistics(self):
+        country = self.country_dropdown.value
+        pollutant = self.pollutant_dropdown.value
+
+        filtered_df = self.df_pollutant.merge(self.df_station, on='station_code')
+        filtered_df = filtered_df[(filtered_df['network_countrycode'] == country) & (filtered_df['pollutant'] == pollutant)]
+
+        mean_value = filtered_df['value_numeric'].mean()
+        max_value = filtered_df['value_numeric'].max()
+        min_value = filtered_df['value_numeric'].min()
+
+        self.statistics_text.value = f"Mean: {mean_value:.2f}\nMax: {max_value}\nMin: {min_value}"
+
+        # Create a bar plot of the statistics
+        stats = [mean_value, max_value, min_value]
+        labels = ['Mean', 'Max', 'Min']
+
+        plt.figure(figsize=(8, 6))
+        plt.bar(labels, stats)
+        plt.xlabel('Statistic')
+        plt.ylabel('Value')
+        plt.title(f'Statistics for {pollutant} in {country}')
+        plt.show()
+
+
+
+class FoliumMap:
+    def __init__(self, table_name='se4g_pollution_main', db_columns='value_numeric, samplingpoint_x, samplingpoint_y'):
+        self.table_name = table_name
+        self.db_columns = db_columns
+        self.selected_pollutant = None
+        self.selected_datetime = None
+        
+    def get_columns(self, table_name_clmns='se4g_pollution_main', db_columns='value_datetime_end'):
+        conn = connect_right_now()
+        cursor = conn.cursor()
+    
+        # Generate the SQL statement to select data from the source table
+        select_data_query = f"SELECT DISTINCT {db_columns} FROM {table_name_clmns};"
+
+        # Execute the SELECT command
+        cursor.execute(select_data_query)
+
+        clmns = [desc[0] for desc in cursor.description]
+        # Fetch all the rows
+        rows_clmns = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return pd.DataFrame(rows_clmns, columns=clmns)
+    
+    def select_filters(self, pollutants=None, datetime_list=None):
+        if pollutants is None:
+            pollutants = ['SO2', 'NO', 'NO2', 'CO', 'PM10']
+        if datetime_list is None:
+            datetime_list = self.get_columns()['value_datetime_end'].tolist()
+
+        pollutant_dropdown = widgets.Dropdown(
+            options=pollutants,
+            description='Select pollutant:'
+        )
+        datetime_dropdown = widgets.Dropdown(
+            options=datetime_list,
+            description='Select datetime:'
+        )
+
+        display(pollutant_dropdown)
+        display(datetime_dropdown)
+
+        self.selected_pollutant = pollutant_dropdown
+        self.selected_datetime = datetime_dropdown
+
+        return pollutant_dropdown, datetime_dropdown
+
+    def update_maps(self, change):
+        conn = connect_right_now()
+        cursor = conn.cursor()
+
+        # Generate the SQL statement to select data from the source table
+        select_data_query = f"SELECT {self.db_columns} FROM {self.table_name} WHERE pollutant = '{self.selected_pollutant.value}' AND value_datetime_end = '{self.selected_datetime.value}';"
+
+        # Execute the SELECT command
+        cursor.execute(select_data_query)
+
+        columns = [desc[0] for desc in cursor.description]
+        # Fetch all the rows
+        rows = cursor.fetchall()
+
+        df = pd.DataFrame(rows, columns=columns)
+
+        geom_list = [Point(xy) for xy in zip(df['samplingpoint_x'], df['samplingpoint_y'])]
+        crs = 'epsg:4979'
+        gdf = gpd.GeoDataFrame(df, crs=crs, geometry=geom_list)
+
+        # Update the MARKER MAP
+        m_folium = folium.Map(location=[57, 15], zoom_start=2.5, tiles='CartoDB positron')
+
+        for index, row in gdf.iterrows():
+            folium.Marker(
+                location=[row['geometry'].y, row['geometry'].x], 
+                popup=row['value_numeric'],
+                icon=folium.map.Icon(color='red')
+            ).add_to(m_folium)
+
+        # Update the HEAT MAP
+        m_heat = folium.Map(location=[55, 15], tiles='Cartodb dark_matter', zoom_start=2.5)
+
+        heat_data = [[point.xy[1][0], point.xy[0][0]] for point in gdf.geometry]
+
+        plugins.HeatMap(heat_data).add_to(m_heat)
+
+        # Update the legend HTML content
+        pollutant_selected = self.selected_pollutant.value
+        datetime_formatted = pd.to_datetime(self.selected_datetime.value).strftime('%y-%m-%d %H:%M')
+        legend_html = f"<div style='position:fixed; top:10px; left:10px; background-color:white; padding:5px; border:1px solid gray; z-index:9999; font-size:12px;'>" \
+                      f"<b>Selected Filters:</b><br>" \
+                      f"Pollutant: {pollutant_selected}<br>" \
+                      f"Datetime: {datetime_formatted}" \
+                      f"</div>"
+
+        # Clear previous legend and add the updated legend to the map
+        m_folium.get_root().html.children = []
+        m_folium.get_root().html.add_child(folium.Element(legend_html))
+
+        # Clear previous legend and add the updated legend to the map
+        m_heat.get_root().html.children = []
+        m_heat.get_root().html.add_child(folium.Element(legend_html))
+
+        # Display the updated maps
+        display(m_folium)
+        display(m_heat)
