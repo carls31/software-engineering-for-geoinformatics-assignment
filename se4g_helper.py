@@ -720,7 +720,7 @@ class Login:
             password = psw.value
 
             if self.check_credentials(username, password):
-                self.authenticate()
+                self.logged_in = True
                 print("Login successful!")
                 # Perform the desired actions here after successful login
             else:
