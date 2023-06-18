@@ -13,6 +13,10 @@ from jupyter_dash import JupyterDash
 import dash
 from dash import dcc
 from dash import html
+from bokeh.plotting import figure, show
+from bokeh.palettes import Category10
+from bokeh.models import ColumnDataSource
+from bokeh.io import output_notebook
 
 #import codecs
 
@@ -1161,3 +1165,61 @@ class Dashboard:
 
 
 
+
+class Interactive:
+    def __init__(self, 
+                    df_pollutant=create_df_from_table(table_name = 'pollutant_detection'), 
+                    df_station=create_df_from_table(table_name = 'station')):
+        self.df_pollutant = df_pollutant
+        self.df_station = df_station
+
+    def select_pollutant(self):
+        pollutants = self.df_pollutant['pollutant'].unique()
+        dropdown_pollutant = widgets.Dropdown(
+            options=pollutants,
+            description='Select pollutant:',
+            layout=widgets.Layout(width='250px'),
+            style={'description_width': 'initial', 'min-width': '250px', 'font-size': '10pt'}
+        )
+        display(dropdown_pollutant)
+        return dropdown_pollutant
+
+    def select_date(self):
+        self.df_pollutant['value_datetime_begin'] = pd.to_datetime(self.df_pollutant['value_datetime_begin'])
+        dates = self.df_pollutant['value_datetime_begin'].dt.date.unique()
+        dropdown_date = widgets.Dropdown(
+            options=dates,
+            description='Select date:',
+            layout=widgets.Layout(width='250px'),
+            style={'description_width': 'initial', 'min-width': '250px', 'font-size': '10pt'}
+        )
+        display(dropdown_date)
+        return dropdown_date
+
+    def create_bokeh_plot(self, selected_pollutant, selected_date):
+        df_selected = self.df_pollutant[
+            (self.df_pollutant['pollutant'] == selected_pollutant) &
+            (self.df_pollutant['value_datetime_begin'].dt.date == selected_date)
+        ]
+
+        # Merge the station and df_pollutant DataFrames on station_code
+        df_country = pd.merge(self.df_station, df_selected, on='station_code')
+
+        countries = df_country['network_countrycode'].unique()
+        colors = Category10[10][:len(countries)]
+
+        p = figure(x_axis_type='datetime', title=f"Pollutant: {selected_pollutant} - Date: {selected_date}",
+                   width=800, height=400)
+
+        for country, color in zip(countries, colors):
+            df_filtered = df_country[df_country['network_countrycode'] == country]
+            df_filtered = df_filtered.sort_values('value_datetime_begin')  # Sort by 'value_datetime_begin'
+            source = ColumnDataSource(df_filtered)
+            p.line(x='value_datetime_begin', y='value_numeric', source=source, line_color=color,
+                   legend_label=country)
+
+        p.legend.location = "top_left"
+        p.legend.click_policy = "hide"
+
+        output_notebook()
+        show(p)
