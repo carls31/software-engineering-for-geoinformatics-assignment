@@ -37,6 +37,7 @@ Documentation files:
  
 ## Usage
 
+Open [APP4P](https://github.com/carls31/SE4GEO-Lab/blob/main/se4g_JupyterDash_demo.ipynb)
 Login and go to 2. otherwise Register following the instructions in 1.
 1. Select the user profile
      * GEO User: This is an Environmental Engineer who, in addition to having access to the dashboard, can also download existing data and, most importantly, upload new data. This user has the ability to contribute to the enrichment of available data.
