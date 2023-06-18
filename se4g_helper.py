@@ -1,3 +1,9 @@
+'''Authors:  Lorenzo Carlassara - mail: lorenzo.carlassara@mail.polimi.it
+            Angelica Iseni      -       angelica.iseni@mail.polimi.it
+            Emma Lodetti        -       emma.lodetti@mail.polimi.it
+            Virginia Valeri     -       virginia.valeri@mail.polimi.it
+'''
+
 import os
 import requests
 import pandas as pd
@@ -17,8 +23,6 @@ from bokeh.plotting import figure, show
 from bokeh.palettes import Category10
 from bokeh.models import ColumnDataSource
 from bokeh.io import output_notebook
-
-#import codecs
 
 
 #---------------------------------------------------------------------------------------------------------------------#
