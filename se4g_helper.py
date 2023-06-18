@@ -9,6 +9,10 @@ from shapely.geometry import Point
 import folium
 from folium import plugins
 import matplotlib.pyplot as plt
+from jupyter_dash import JupyterDash
+import dash
+from dash import dcc
+from dash import html
 
 #import codecs
 
@@ -925,3 +929,235 @@ class FoliumMap:
         # Display the updated maps
         display(m_folium)
         display(m_heat)
+        
+
+
+
+
+def load_data(table_name):
+    # Connect to the database and fetch the data
+    conn = connect_right_now()
+    cursor = conn.cursor()
+
+    # Generate the SQL statement to select data from the source table
+    select_data_query = f"SELECT * FROM {table_name};"
+
+    # Execute the SELECT command
+    cursor.execute(select_data_query)
+
+    columns = [desc[0] for desc in cursor.description]
+
+    # Fetch all the rows
+    rows = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # Create a pandas DataFrame from the fetched rows
+    df = pd.DataFrame(rows, columns=columns)
+
+    unique_month_day = df['month_day'].unique()
+    month_day_dict = {day: index + 1 for index, day in enumerate(unique_month_day)}
+
+    df['time_series'] = df['month_day'].map(month_day_dict)
+    df = df[df['country'] != 'Bosnia and Herzegovina']
+
+    df['month_day_date'] = '2023' + df['month_day'].astype(str)
+    df['month_day_date'] = pd.to_datetime(df['month_day_date'], format='%Y%m%d')
+
+    return df
+
+class Dashboard:
+    def __init__(self, table_name='se4g_dashboard'):
+        self.app = JupyterDash(__name__)
+        self.df = load_data(table_name)  # Initialize an empty DataFrame
+
+    def load_data(self):
+        # Connect to the database and fetch the data
+        conn = connect_right_now()
+        cursor = conn.cursor()
+
+        # Generate the SQL statement to select data from the source table
+        select_data_query = f"SELECT * FROM {self.table_name};"
+
+        # Execute the SELECT command
+        cursor.execute(select_data_query)
+
+        columns = [desc[0] for desc in cursor.description]
+
+        # Fetch all the rows
+        rows = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        # Create a pandas DataFrame from the fetched rows
+        self.df = pd.DataFrame(rows, columns=columns)
+
+        unique_month_day = self.df['month_day'].unique()
+        month_day_dict = {day: index + 1 for index, day in enumerate(unique_month_day)}
+
+        self.df['time_series'] = self.df['month_day'].map(month_day_dict)
+        self.df = self.df[self.df['country'] != 'Bosnia and Herzegovina']
+
+        self.df['month_day_date'] = '2023' + self.df['month_day'].astype(str)
+        self.df['month_day_date'] = pd.to_datetime(self.df['month_day_date'], format='%Y%m%d')
+
+    def create_dashboard(self):
+        available_indicators = self.df['pollutant'].unique()
+
+        external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+
+        self.app = JupyterDash(__name__, external_stylesheets=external_stylesheets)
+
+        self.app.layout = html.Div([
+            html.Div([
+                html.Div([
+                    dcc.Dropdown(
+                        id='crossfilter-xaxis-column',
+                        options=[{'label': i, 'value': i} for i in available_indicators],
+                        value='SO2'
+                    ),
+                    dcc.RadioItems(
+                        id='crossfilter-xaxis-type',
+                        options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
+                        value='Linear',
+                        labelStyle={'display': 'inline-block'}
+                    )
+                ],
+                    style={'width': '49%', 'display': 'inline-block'}),
+
+                html.Div([
+                    dcc.Dropdown(
+                        id='crossfilter-yaxis-column',
+                        options=[{'label': i, 'value': i} for i in available_indicators],
+                        value='CO'
+                    ),
+                    dcc.RadioItems(
+                        id='crossfilter-yaxis-type',
+                        options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
+                        value='Linear',
+                        labelStyle={'display': 'inline-block'}
+                    )
+                ], style={'width': '49%', 'float': 'right', 'display': 'inline-block'})
+            ], style={
+                'borderBottom': 'thin lightgrey solid',
+                'backgroundColor': 'rgb(250, 250, 250)',
+                'padding': '10px 5px'
+            }),
+
+            html.Div([
+                dcc.Graph(
+                    id='crossfilter-indicator-scatter',
+                    hoverData={'points': [{'customdata': 'Andorra'}]}
+                )
+            ], style={'width': '49%', 'display': 'inline-block', 'padding': '0 20'}),
+            html.Div([
+                dcc.Graph(id='x-time-series'),
+                dcc.Graph(id='y-time-series'),
+            ], style={'display': 'inline-block', 'width': '49%'}),
+
+            html.Div(dcc.Slider(
+                id='crossfilter-year--slider',
+                min=self.df['time_series'].min(),
+                max=self.df['time_series'].max(),
+                value=self.df['time_series'].max(),
+                marks={str(time): str(time) for time in self.df['month_day_date'].unique()},
+                step=None
+            ), style={'width': '49%', 'padding': '0px 20px 20px 20px'})
+        ])
+
+        @self.app.callback(
+            dash.dependencies.Output('crossfilter-indicator-scatter', 'figure'),
+            [dash.dependencies.Input('crossfilter-xaxis-column', 'value'),
+             dash.dependencies.Input('crossfilter-yaxis-column', 'value'),
+             dash.dependencies.Input('crossfilter-xaxis-type', 'value'),
+             dash.dependencies.Input('crossfilter-yaxis-type', 'value'),
+             dash.dependencies.Input('crossfilter-year--slider', 'value')])
+        def update_graph(xaxis_column_name, yaxis_column_name,
+                         xaxis_type, yaxis_type,
+                         year_value):
+            dff = self.df[self.df['time_series'] == year_value]
+
+            return {
+                'data': [dict(
+                    x=dff[dff['pollutant'] == xaxis_column_name]['value_numeric_mean'],
+                    y=dff[dff['pollutant'] == yaxis_column_name]['value_numeric_mean'],
+                    text=dff[dff['pollutant'] == yaxis_column_name]['country'],
+                    customdata=dff[dff['pollutant'] == yaxis_column_name]['country'],
+                    mode='markers',
+                    marker={
+                        'size': 25,
+                        'opacity': 0.7,
+                        'color': 'orange',
+                        'line': {'width': 2, 'color': 'purple'}
+                    }
+                )],
+                'layout': dict(
+                    xaxis={
+                        'title': xaxis_column_name,
+                        'type': 'linear' if xaxis_type == 'Linear' else 'log'
+                    },
+                    yaxis={
+                        'title': yaxis_column_name,
+                        'type': 'linear' if yaxis_type == 'Linear' else 'log'
+                    },
+                    margin={'l': 40, 'b': 30, 't': 10, 'r': 0},
+                    height=450,
+                    hovermode='closest'
+                )
+            }
+
+
+        def create_time_series(dff, axis_type, title):
+            return {
+                'data': [dict(
+                    x=dff['time_series'],
+                    y=dff['value_numeric_mean'],
+                    mode='lines+markers'
+                )],
+                'layout': {
+                    'height': 225,
+                    'margin': {'l': 20, 'b': 30, 'r': 10, 't': 10},
+                    'annotations': [{
+                        'x': 0, 'y': 0.85, 'xanchor': 'left', 'yanchor': 'bottom',
+                        'xref': 'paper', 'yref': 'paper', 'showarrow': False,
+                        'align': 'left', 'bgcolor': 'rgba(255, 255, 255, 0.5)',
+                        'text': title
+                    }],
+                    'yaxis': {'type': 'linear' if axis_type == 'Linear' else 'log'},
+                    'xaxis': {'showgrid': False}
+                }
+            }
+
+        @self.app.callback(
+            dash.dependencies.Output('x-time-series', 'figure'),
+            [dash.dependencies.Input('crossfilter-indicator-scatter', 'hoverData'),
+             dash.dependencies.Input('crossfilter-xaxis-column', 'value'),
+             dash.dependencies.Input('crossfilter-xaxis-type', 'value')])
+        def update_x_timeseries(hoverData, xaxis_column_name, axis_type):
+            country_name = hoverData['points'][0]['customdata']
+            dff = self.df[self.df['country'] == country_name]
+            dff = dff[dff['pollutant'] == xaxis_column_name]
+            title = '<b>{}</b><br>{}'.format(country_name, xaxis_column_name)
+            return create_time_series(dff, axis_type, title)
+
+        @self.app.callback(
+            dash.dependencies.Output('y-time-series', 'figure'),
+            [dash.dependencies.Input('crossfilter-indicator-scatter', 'hoverData'),
+             dash.dependencies.Input('crossfilter-yaxis-column', 'value'),
+             dash.dependencies.Input('crossfilter-yaxis-type', 'value')])
+        def update_y_timeseries(hoverData, yaxis_column_name, axis_type):
+            dff = self.df[self.df['country'] == hoverData['points'][0]['customdata']]
+            dff = dff[dff['pollutant'] == yaxis_column_name]
+            return create_time_series(dff, axis_type, yaxis_column_name)
+    
+    def run(self):
+        #self.load_data()
+        self.create_dashboard()  # Set up the layout of the application
+        self.app.run_server(mode='inline')  # Change mode to 'external' if using Jupyter Notebook
+
+
+
+
+
