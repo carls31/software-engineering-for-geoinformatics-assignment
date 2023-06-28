@@ -643,15 +643,30 @@ class Login:
         if os.path.isfile(self.path_file):
             df = pd.read_csv(self.path_file)
             self.user_list = dict(zip(df['Username'], df['Password']))
-        self.logged_in = False
+        else:
+            self.user_list = {}
+        self._load_login_status()
 
-    def authenticate(self):
-        # Add code for the login process
-        self.logged_in = True
+    def _load_login_status(self):
+        login_status_file = 'login_status.txt'
+        login_status_path = os.path.join('code', login_status_file)
+        if os.path.isfile(login_status_path):
+            #print('check point')
+            with open(login_status_path, 'r') as f:
+                self.logged_in = bool(int(f.read()))
+        else:
+            self.logged_in = False
+    
+    def _save_login_status(self):
+        login_status_file = 'login_status.txt'
+        login_status_path = os.path.join('code', login_status_file)
+        with open(login_status_path, 'w') as f:
+            f.write(str(int(self.logged_in)))
 
     def logout(self):
         # Add code for the logout process
         self.logged_in = False
+        self._save_login_status()
 
     def check_credentials(self, username, password):
         if username in self.user_list and self.user_list[username] == password:
@@ -670,34 +685,6 @@ class Login:
         df = pd.DataFrame(data)
         df.to_csv(self.path_file, index=False)
         print(f"User data saved to {self.path_file} successfully.")
-
-    def _to_DB(self):
-        user = widgets.Text(
-            placeholder='Type postgres',
-            description='Username:',
-            disabled=False   
-        )
-
-        psw = widgets.Password(
-            placeholder='Enter password',
-            description='Password:',
-            disabled=False
-        )
-
-        login_button = widgets.Button(description="Login")
-        display(user, psw, login_button)
-
-        def handle_login_button_click(button):
-            username = user.value
-            password = psw.value
-
-            if self.check_credentials(username, password):
-                conn = connect_right_now()
-                return conn
-            else:
-                print("Invalid username or password.")
-
-        login_button.on_click(handle_login_button_click)
 
     def _required(self):
         user = widgets.Text(
@@ -721,6 +708,7 @@ class Login:
 
             if self.check_credentials(username, password):
                 self.logged_in = True
+                self._save_login_status()
                 print("Login successful!")
                 # Perform the desired actions here after successful login
             else:
@@ -731,12 +719,14 @@ class Login:
 def login_register_section():
     register = Register()
     login = Login()
+    
     if login.logged_in:
         print("You are logged in.")
         action = input("Choose an action (1 - Logout, 2 - Perform Authorized Action, 3 - Exit): ")
 
         if action == "1":
             login.logout()
+            login._save_login_status()
             print("Logged out successfully.")
         elif action == "2":
             # Include code for authorized functions/cells
